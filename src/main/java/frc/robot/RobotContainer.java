@@ -9,17 +9,19 @@ import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
+import frc.robot.subsystems.ShootSubsystem;
 
 
 public class RobotContainer
 {
+    public ShootSubsystem shoot = new ShootSubsystem();
     public RobotContainer()
     {
         DataLogManager.start("/U/logs");
         SignalLogger.enableAutoLogging(false);
 
         configureBindings();
+
     }
     
     
