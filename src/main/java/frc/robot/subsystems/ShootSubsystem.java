@@ -1,28 +1,23 @@
 package frc.robot.subsystems;
 
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.LoggedCommand;
 import frc.robot.math.FlywheelController;
 import frc.robot.math.PID;
 
-public class ShootSubsystem extends SubsystemBase {
-    private SparkMax motorOne;
-    private SparkMax motorTwo;
+import static frc.robot.Constants.Shooter.*;
+
+public class ShootSubsystem extends LoggedSubsystem {
     private FlywheelController controller;
     private PID pid;
+    private double goalSpeed;
 
     public ShootSubsystem () {
-        motorOne = new SparkMax(1, SparkLowLevel.MotorType.kBrushless);
-        motorTwo = new SparkMax(3, SparkLowLevel.MotorType.kBrushless);
-        motorOne.configure(new SparkMaxConfig().inverted(false),ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        motorTwo.configure(new SparkMaxConfig().inverted(true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        pid = new PID(0.005,0,0, 1, -1,0,()-> motorOne.getEncoder().getVelocity());
+        pid = new PID(0.005,0,0, 1, -1,0,()-> getCurrentVelocity());
         controller = new FlywheelController(0.00205,pid,0.12);
         SmartDashboard.putData("pid", pid);
         SmartDashboard.putData("controller", controller);
@@ -31,8 +26,26 @@ public class ShootSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
     double output = controller.calculate();
-    motorOne.setVoltage(output);
-    motorTwo.setVoltage(output);
-    SmartDashboard.putNumber("speed",motorOne.getEncoder().getVelocity());
+    SmartDashboard.putNumber("speed",getCurrentVelocity());
+    }
+
+    public void setGoalSpeed(double goalSpeed) {
+        this.goalSpeed = goalSpeed;
+        controller.setSetpoint(goalSpeed);
+
+    }
+    public double getCurrentVelocity(){
+     return 0;//todo
+    }
+    public Command getShootCommand(double speed){
+        Command c = new InstantCommand(()->setGoalSpeed(speed),this).until(this::isAtGoalSpeed);
+        return LoggedCommand.logCommand(c);
+    }
+    private boolean isAtGoalSpeed(){
+        return Math.abs(goalSpeed-getCurrentVelocity())<cFlywheelTolerance;
+    }
+    public Command stopShoot(){
+        Command c = new InstantCommand(()->setGoalSpeed(0));
+        return LoggedCommand.logCommand(c);
     }
 }

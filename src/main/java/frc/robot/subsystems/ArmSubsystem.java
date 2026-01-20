@@ -1,4 +1,4 @@
 package frc.robot.subsystems;
 
-public class ArmSubsystem {
+public class ArmSubsystem extends LoggedSubsystem{
 }

@@ -1,4 +1,4 @@
 package frc.robot.subsystems;
 
-public class IndexSubsystem {
+public class IndexSubsystem extends LoggedSubsystem{
 }

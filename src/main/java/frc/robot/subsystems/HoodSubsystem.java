@@ -1,4 +1,4 @@
 package frc.robot.subsystems;
 
-public class HoodSubsystem {
+public class HoodSubsystem extends LoggedSubsystem{
 }
