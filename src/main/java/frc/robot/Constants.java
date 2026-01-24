@@ -15,5 +15,12 @@ public class Constants {
         public static final double cMotorID1=0;
         public static final double cMotorID2=0;
     }
-
+    public static class Hood{
+        public static final int cMotorID=0;
+        public static final int cAbsoluteEncodeID=0;
+        public static final int cEncoderIDA=0;
+        public static final int cEncoderIDB=0;
+        public static final double cAngleOffset=0;
+        public static final double cConversionFactor=0;
+    }
 }
