@@ -15,33 +15,37 @@ public class LoggedCommand extends Command {
         setName(command.getName());
     }
     public LoggedCommand () {
-
+        command = this;
     }
+
     public static Command logCommand(Command command) {
         return new LoggedCommand(command);
     }
 
     @Override
     public void initialize() {
-        super.initialize();
         for (Subsystem s:getRequirements()) {
             if (s instanceof LoggedSubsystem) {
                 ((LoggedSubsystem) s).Log(getName()+".initialize");
             }
         }
-        command.initialize();
+        if (command != this)
+            command.initialize();
     }
 
 
     @Override
     public void execute() {
         super.execute();
-        command.execute();
+        if (command != this)
+            command.execute();
     }
 
     @Override
     public boolean isFinished() {
-        return command.isFinished();
+        if (command != this)
+            return command.isFinished();
+        return false;
     }
 
     @Override
@@ -51,26 +55,31 @@ public class LoggedCommand extends Command {
             if (s instanceof LoggedSubsystem) {
                 ((LoggedSubsystem) s).Log(getName()+".end");
             }
-
         }
-        command.end(interrupted);
+        if (command != this)
+            command.end(interrupted);
 
     }
 
     @Override
     public Set<Subsystem> getRequirements() {
-        return command.getRequirements();
+        if (command != this)
+            return command.getRequirements();
+        return super.getRequirements();
     }
 
     @Override
     public InterruptionBehavior getInterruptionBehavior() {
-        return command.getInterruptionBehavior();
-
+        if (command != this)
+            return command.getInterruptionBehavior();
+        return super.getInterruptionBehavior();
     }
 
     @Override
     public boolean runsWhenDisabled() {
-        return command.runsWhenDisabled();
+        if (command != this)
+            return command.runsWhenDisabled();
+        else return super.runsWhenDisabled();
     }
 }
 

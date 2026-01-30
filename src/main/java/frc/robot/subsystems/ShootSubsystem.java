@@ -80,3 +80,4 @@ public class ShootSubsystem extends LoggedSubsystem {
         return LoggedCommand.logCommand(c);
     }
 }
+
