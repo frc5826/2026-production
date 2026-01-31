@@ -46,6 +46,10 @@ public class SwerveSubsystem extends LoggedSubsystem {
     public double getMaxSpeed (){
         return feedForward;
     }
+
+    public void zeroGyro (){
+        swerveDrive.zeroGyro();
+    }
 }
 
 

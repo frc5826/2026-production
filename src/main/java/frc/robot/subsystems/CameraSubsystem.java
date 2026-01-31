@@ -40,11 +40,16 @@ public class CameraSubsystem extends SubsystemBase {
 
     }
 
+    public double getHubDistance() {
+        return hubDistance;
+    }
+
     @Override
     public void periodic() {
         for (Camera c : cameras) {
             getCameraValues(c);
         }
+        SmartDashboard.putNumber("shoot/hub",getHubDistance());
     }
 
     private record Camera(PhotonCamera photon, Transform3d robotToCamera) {
@@ -52,6 +57,7 @@ public class CameraSubsystem extends SubsystemBase {
             this(new PhotonCamera(name), new Transform3d(translation, rotation));
         }
     }
+
 }
 
 
