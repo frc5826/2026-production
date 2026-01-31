@@ -9,6 +9,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.revrobotics.util.StatusLogger;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -23,9 +24,9 @@ import java.io.File;
 
 
 public class RobotContainer {
-    // public CameraSubsystem cameras = new CameraSubsystem();
-    //public ShootSubsystem shoot = new ShootSubsystem();
-    public SwerveSubsystem swerve = new SwerveSubsystem();
+     public CameraSubsystem cameras = new CameraSubsystem();
+    public ShootSubsystem shoot = new ShootSubsystem();
+//    public SwerveSubsystem swerve = new SwerveSubsystem();
     public XboxController xbox = new XboxController(1);
     // public IntakeSubsystem intake = new IntakeSubsystem();
 
@@ -38,7 +39,9 @@ public class RobotContainer {
 
         configureBindings();
 
-        swerve.setDefaultCommand(new TeleopDriveCommand(swerve, xbox));
+        SmartDashboard.putData("shoot/fromDistance",shoot.getShootCommand(cameras::getHubDistance));
+        SmartDashboard.putData("shoot/stop",shoot.stopShoot());
+//        swerve.setDefaultCommand(new TeleopDriveCommand(swerve, xbox));
 
     }
 
@@ -46,7 +49,7 @@ public class RobotContainer {
     private void configureBindings() {
         //new Trigger(()->xbox.getLeftTriggerAxis()>0.5).whileTrue(intake.getIntakeCommand(0.2));
         //new Trigger(()->xbox.getRightTriggerAxis()>0.5).whileTrue(shoot.getShootCommand(cameras::getHubDistance));
-        new Trigger(xbox::getYButton).onTrue(new InstantCommand(swerve::zeroGyro));
+//        new Trigger(xbox::getYButton).onTrue(new InstantCommand(swerve::zeroGyro));
     }
 
 

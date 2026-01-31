@@ -72,7 +72,8 @@ public class ShootSubsystem extends LoggedSubsystem {
     }
 
     private  double getRPMFromDistance(double distance) {
-        return 0;//todo
+        double x = distance + 0.60;
+        return -102.62602 * Math.pow(x, 4) + 1659.2906 * Math.pow(x, 3) - 9494.24078 * Math.pow(x, 2) + 23465.129 * x - 18598.1388;//todo
     }
 
     public Command stopShoot(){
