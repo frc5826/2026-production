@@ -11,12 +11,12 @@ public class IntakeSubsystem extends LoggedSubsystem {
     private SparkFlex motor1;
 
     public IntakeSubsystem(){
-        motor1=new SparkFlex(1, SparkLowLevel.MotorType.kBrushless);
+        motor1=new SparkFlex(5, SparkLowLevel.MotorType.kBrushless);
 
 
     }
     public Command getIntakeCommand(double speed){
-        Command c=new RunCommand(()->setSpeed(speed),this).andThen(()->setSpeed(0));
+        Command c=new RunCommand(()->setSpeed(speed),this).finallyDo(()->setSpeed(0));
         return LoggedCommand.logCommand(c);
     }
     public void setSpeed(double speed){

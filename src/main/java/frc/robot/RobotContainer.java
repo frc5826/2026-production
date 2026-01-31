@@ -27,7 +27,7 @@ public class RobotContainer {
     //public ShootSubsystem shoot = new ShootSubsystem();
     public SwerveSubsystem swerve = new SwerveSubsystem();
     public XboxController xbox = new XboxController(1);
-    // public IntakeSubsystem intake = new IntakeSubsystem();
+     public IntakeSubsystem intake = new IntakeSubsystem();
 
     public RobotContainer() {
         if (new File("/U/logs").isDirectory()) {
@@ -44,7 +44,7 @@ public class RobotContainer {
 
 
     private void configureBindings() {
-        //new Trigger(()->xbox.getLeftTriggerAxis()>0.5).whileTrue(intake.getIntakeCommand(0.2));
+        new Trigger(()->xbox.getLeftTriggerAxis()>0.5).whileTrue(intake.getIntakeCommand(0.5));
         //new Trigger(()->xbox.getRightTriggerAxis()>0.5).whileTrue(shoot.getShootCommand(cameras::getHubDistance));
         new Trigger(xbox::getYButton).onTrue(new InstantCommand(swerve::zeroGyro));
     }
