@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public class Locations {
     private static double length = 16.54;
     private static double width = 8.07;
-    private static boolean isBlue = true; //todo
+    private static boolean isBlue = false; //todo
 
 
     private Locations () {

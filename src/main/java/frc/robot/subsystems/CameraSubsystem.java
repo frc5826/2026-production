@@ -34,6 +34,7 @@ public class CameraSubsystem extends SubsystemBase {
                 Transform3d cameraTransform = result.getMultiTagResult().get().estimatedPose.best;
                 Pose2d cameraPose = Pose3d.kZero.plus(cameraTransform).toPose2d();
                 hubDistance = cameraPose.getTranslation().getDistance(Locations.getHubPose().getTranslation());
+                field.setRobotPose(cameraPose);
             }
 
         }
