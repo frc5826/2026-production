@@ -36,7 +36,7 @@ public class TeleopDriveCommand extends LoggedCommand {
             turnSpeed = 0;
         }
         double multiplier = swerve.getMaxSpeed();
-        swerve.drive(xSpeed * multiplier, ySpeed * multiplier, turnSpeed * multiplier);
+        swerve.teleopDrive(xSpeed * multiplier, ySpeed * multiplier, turnSpeed * multiplier);
 
     }
 }
