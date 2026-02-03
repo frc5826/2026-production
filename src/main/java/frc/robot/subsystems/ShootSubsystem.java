@@ -26,14 +26,15 @@ public class ShootSubsystem extends LoggedSubsystem {
     private double goalSpeed;
     private SparkFlex motor1;
     private SparkFlex motor2;
+    private boolean stop = true;
 
     public ShootSubsystem () {
-        pid = new PID(0.0007,0,0, 10, -0.2,0,()-> getCurrentVelocity());
-        controller = new FlywheelController(0.0018,pid,0.14);
+        pid = new PID(cFlywheelPID, 10, -0.2,0,()-> getCurrentVelocity());
+        controller = new FlywheelController(cV,pid,cS);
         SmartDashboard.putData("pid", pid);
         SmartDashboard.putData("controller", controller);
-        motor1 = new SparkFlex(1, SparkLowLevel.MotorType.kBrushless);
-        motor2 = new SparkFlex(22, SparkLowLevel.MotorType.kBrushless);
+        motor1 = new SparkFlex(cMotorID1, SparkLowLevel.MotorType.kBrushless);
+        motor2 = new SparkFlex(cMotorID2, SparkLowLevel.MotorType.kBrushless);
         motor1.configure(new SparkFlexConfig().inverted(false), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         motor2.configure(new SparkFlexConfig().follow(motor1,true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -42,7 +43,9 @@ public class ShootSubsystem extends LoggedSubsystem {
     public void periodic() {
         double output = controller.calculate();
         SmartDashboard.putNumber("speed",getCurrentVelocity());
-        motor1.setVoltage(output);
+       if(stop){
+           motor1.setVoltage(cS);
+       }else motor1.setVoltage(output);
     }
 
     public void setGoalSpeed(double goalSpeed) {
@@ -61,11 +64,13 @@ public class ShootSubsystem extends LoggedSubsystem {
 
 
     public Command getShootCommand(double speed){
-        Command c = new InstantCommand(()->setGoalSpeed(speed),this).until(this::isAtGoalSpeed);
+        Command c = new InstantCommand(()->{setGoalSpeed(speed);
+            stop = false;},this).until(this::isAtGoalSpeed);
         return LoggedCommand.logCommand(c);
     }
     public Command getShootCommand(DoubleSupplier distanceSupplier){
         Command c = new InstantCommand(()->{
+            stop = false;
             setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()));
         },this).until(this::isAtGoalSpeed);
         return LoggedCommand.logCommand(c);
@@ -77,7 +82,8 @@ public class ShootSubsystem extends LoggedSubsystem {
     }
 
     public Command stopShoot(){
-        Command c = new InstantCommand(()->setGoalSpeed(0));
+        Command c = new InstantCommand(()->{setGoalSpeed(0);
+        stop = true;});
         return LoggedCommand.logCommand(c);
     }
 }
