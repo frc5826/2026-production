@@ -95,12 +95,3 @@ public class Robot extends TimedRobot
     @Override
     public void testExit() {}
 }
-//🧊🧊👶
-//💍📴🔥
-//ಠ╭╮ಠ
-//🧔🔥🐔
-//🐔🕺
-//👨‍👩‍👧‍👦🧬💛🚢
-//❌🛑🐝🚶‍♂️
-//🏡🔛🙏
-//IfYouReadThese...   ImSorry...

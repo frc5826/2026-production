@@ -15,20 +15,19 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.swerve.TeleopDriveCommand;
-import frc.robot.subsystems.CameraSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShootSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.*;
 
 import java.io.File;
 
 
 public class RobotContainer {
-     public CameraSubsystem cameras = new CameraSubsystem();
+
     public ShootSubsystem shoot = new ShootSubsystem();
-//    public SwerveSubsystem swerve = new SwerveSubsystem();
+    public SwerveSubsystem swerve = new SwerveSubsystem();
+    public CameraSubsystem cameras = new CameraSubsystem(swerve::addVisionMeasurement);
     public XboxController xbox = new XboxController(1);
      public IntakeSubsystem intake = new IntakeSubsystem();
+     public IndexSubsystem index = new IndexSubsystem();
 
     public RobotContainer() {
         if (new File("/U/logs").isDirectory()) {
@@ -39,17 +38,23 @@ public class RobotContainer {
 
         configureBindings();
 
-//        SmartDashboard.putData("shoot/fromDistance",shoot.getShootCommand(cameras::getHubDistance));
-//        SmartDashboard.putData("shoot/stop", () -> shoot.stopShoot());
+        //SmartDashboard.putData("shoot/fromDistance",shoot.getShootCommand(cameras::getHubDistance));
+        //SmartDashboard.putData("shoot/stop",shoot.stopShoot());
 //        swerve.setDefaultCommand(new TeleopDriveCommand(swerve, xbox));
 
     }
 
 
     private void configureBindings() {
+
         new Trigger(()->xbox.getLeftTriggerAxis()>0.5).whileTrue(intake.getIntakeCommand(0.5));
-        //new Trigger(()->xbox.getRightTriggerAxis()>0.5).whileTrue(shoot.getShootCommand(cameras::getHubDistance));
-//        new Trigger(xbox::getYButton).onTrue(new InstantCommand(swerve::zeroGyro));
+        new Trigger(()->xbox.getRightBumperButton()).onTrue(shoot.getShootCommand(cameras::getHubDistance));
+        new Trigger(()->xbox.getRightTriggerAxis()>0.5).whileTrue(index.IndexCommand(0.3));
+        new Trigger(()->xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand(0.5));
+        //new Trigger(()->xbox.getLeftTriggerAxis()>0.25).toggleOnTrue(end priority aim);
+        //new Trigger(()->xbox.getYButton()).toggleOnTrue(climb);
+
+
     }
 
 

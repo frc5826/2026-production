@@ -13,13 +13,20 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
+import java.util.function.Function;
 
 public class CameraSubsystem extends SubsystemBase {
     private List<Camera> cameras = new ArrayList<>(5);
     private Field2d field = new Field2d();
     private double hubDistance = 0;
+    private BiConsumer<Pose2d, Double> odometry;
 
-    public CameraSubsystem() {
+    public CameraSubsystem(BiConsumer<Pose2d, Double> odometry) {
+
+        this.odometry = odometry;
         SmartDashboard.putData("field", field);
         cameras.add(
                 new Camera("Arducam_1", new Translation3d(0, 0, 0), new Rotation3d())
@@ -33,6 +40,8 @@ public class CameraSubsystem extends SubsystemBase {
             if (result.getMultiTagResult().isPresent()) {
                 Transform3d cameraTransform = result.getMultiTagResult().get().estimatedPose.best;
                 Pose2d cameraPose = Pose3d.kZero.plus(cameraTransform).toPose2d();
+                Pose3d robotPose = Pose3d.kZero.plus(cameraTransform).plus(camera.robotToCamera.inverse());
+                odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds());
                 hubDistance = cameraPose.getTranslation().getDistance(Locations.getHubPose().getTranslation());
                 field.setRobotPose(cameraPose);
             }

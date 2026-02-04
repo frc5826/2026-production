@@ -6,6 +6,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.LoggedCommand;
+import frc.robot.math.TurnController;
 import org.json.simple.parser.ParseException;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
@@ -26,6 +28,9 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
     private SwerveDrive swerveDrive;
     private double feedForward = 5;
+    private TurnController turnController;
+    private boolean overrideTurn = false;
+
 
     public SwerveSubsystem() {
 
@@ -42,8 +47,34 @@ public class SwerveSubsystem extends LoggedSubsystem {
         }
         setupPathPlanner();
         SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
-        swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(0,1));
+//        swerveDrive.setVisionMeasurementStdDevs();
+
+        turnController = new TurnController(0, 0, 0, 0, 0, 0, 0, ()->swerveDrive.getYaw().getRadians());
+
     }
+
+    public void addVisionMeasurement(Pose2d robotPos, double timestamp){
+
+        swerveDrive.addVisionMeasurement(robotPos, timestamp);
+
+    }
+    //TODO Set turnController to control something
+    public void setTurnGoal(Rotation2d targetAngle){
+
+        overrideTurn = true;
+        turnController.setGoal(targetAngle.getRadians(), swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
+
+    }
+
+    public void endTurn(){
+
+        overrideTurn = false;
+
+    }
+
+
+
+
 
     private void setupPathPlanner() {
         RobotConfig config;
@@ -78,10 +109,20 @@ public class SwerveSubsystem extends LoggedSubsystem {
     }
 
     public void teleopDrive(double xSpeed, double ySpeed, double turnSpeed) {
-        swerveDrive.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, turnSpeed));
+        DriverStation.Alliance alliance = DriverStation.getAlliance().get();
+        if (alliance == DriverStation.Alliance.Red){
+            xSpeed = -xSpeed;
+            ySpeed = -ySpeed;
+        }
+        drive(new ChassisSpeeds(xSpeed, ySpeed, turnSpeed));
     }
 
     public void drive(ChassisSpeeds speeds) {
+
+        if (overrideTurn){
+            speeds.omegaRadiansPerSecond = turnController.calculate(0.02);
+        }
+
         swerveDrive.driveFieldOriented(speeds);
     }
 
@@ -93,4 +134,3 @@ public class SwerveSubsystem extends LoggedSubsystem {
         swerveDrive.zeroGyro();
     }
 }
-// shelter = want; me have no shelter :(. Video games = need; me have video games :) food = want; me have no food :( stuff

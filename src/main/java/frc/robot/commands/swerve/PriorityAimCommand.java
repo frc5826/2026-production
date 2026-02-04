@@ -1,0 +1,51 @@
+package frc.robot.commands.swerve;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.commands.LoggedCommand;
+import frc.robot.math.PID;
+import frc.robot.math.localization.Locations;
+import frc.robot.subsystems.CameraSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import org.photonvision.PhotonUtils;
+
+public class PriorityAimCommand extends LoggedCommand {
+
+    private CameraSubsystem cameraSubsystem;
+    private SwerveSubsystem swerveSubsystem;
+
+    public PriorityAimCommand(SwerveSubsystem swerveSubsystem, CameraSubsystem cameraSubsystem){
+
+        this.swerveSubsystem = swerveSubsystem;
+        this.cameraSubsystem = cameraSubsystem;
+
+    }
+//TODO Change Priority Based on Location on Field
+    @Override
+    public void initialize() {
+        super.initialize();
+    }
+
+    @Override
+    public void execute() {
+        super.execute();
+
+        Pose2d robotPose = swerveSubsystem.getPose();
+        Rotation2d rotation2d = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
+
+        swerveSubsystem.setTurnGoal(rotation2d);
+
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        super.end(interrupted);
+
+        swerveSubsystem.endTurn();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return super.isFinished();
+    }
+}
