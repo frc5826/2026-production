@@ -39,8 +39,8 @@ public class RobotContainer {
 
         configureBindings();
 
-        SmartDashboard.putData("shoot/fromDistance",shoot.getShootCommand(cameras::getHubDistance));
-        SmartDashboard.putData("shoot/stop",shoot.stopShoot());
+//        SmartDashboard.putData("shoot/fromDistance",shoot.getShootCommand(cameras::getHubDistance));
+//        SmartDashboard.putData("shoot/stop", () -> shoot.stopShoot());
 //        swerve.setDefaultCommand(new TeleopDriveCommand(swerve, xbox));
 
     }
@@ -57,12 +57,3 @@ public class RobotContainer {
         return Commands.print("No autonomous command configured");
     }
 }
-//🧊🧊👶
-//💍📴🔥
-//ಠ╭╮ಠ
-//🧔🔥🐔
-//🐔🕺
-//👨‍👩‍👧‍👦🧬💛🚢
-//❌🛑🐝🚶‍♂️
-//🏡🔛🙏
-//IfYouReadThese...   ImSorry...

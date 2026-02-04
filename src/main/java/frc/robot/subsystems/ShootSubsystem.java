@@ -28,24 +28,24 @@ public class ShootSubsystem extends LoggedSubsystem {
     private SparkFlex motor2;
     private boolean stop = true;
 
-    public ShootSubsystem () {
-        pid = new PID(cFlywheelPID, 10, -0.2,0,()-> getCurrentVelocity());
-        controller = new FlywheelController(cV,pid,cS);
+    public ShootSubsystem() {
+        pid = new PID(cFlywheelPID, 10, -0.2, 0, () -> getCurrentVelocity());
+        controller = new FlywheelController(cV, pid, cS);
         SmartDashboard.putData("pid", pid);
         SmartDashboard.putData("controller", controller);
         motor1 = new SparkFlex(cMotorID1, SparkLowLevel.MotorType.kBrushless);
         motor2 = new SparkFlex(cMotorID2, SparkLowLevel.MotorType.kBrushless);
         motor1.configure(new SparkFlexConfig().inverted(false), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        motor2.configure(new SparkFlexConfig().follow(motor1,true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor2.configure(new SparkFlexConfig().follow(motor1, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
     public void periodic() {
         double output = controller.calculate();
-        SmartDashboard.putNumber("speed",getCurrentVelocity());
-       if(stop){
-           motor1.setVoltage(cS);
-       }else motor1.setVoltage(output);
+        SmartDashboard.putNumber("speed", getCurrentVelocity());
+        if (stop) {
+            motor1.setVoltage(cS);
+        } else motor1.setVoltage(output);
     }
 
     public void setGoalSpeed(double goalSpeed) {
@@ -53,38 +53,49 @@ public class ShootSubsystem extends LoggedSubsystem {
         controller.setSetpoint(goalSpeed);
     }
 
-    public double getCurrentVelocity(){
-        return (motor1.getEncoder().getVelocity()+motor2.getEncoder().getVelocity())/2;
+    public double getCurrentVelocity() {
+        return (motor1.getEncoder().getVelocity() + motor2.getEncoder().getVelocity()) / 2;
     }
 
-    private boolean isAtGoalSpeed(){
-        return Math.abs(goalSpeed-getCurrentVelocity())<cFlywheelTolerance;
+    private boolean isAtGoalSpeed() {
+        return Math.abs(goalSpeed - getCurrentVelocity()) < cFlywheelTolerance;
     }
 
 
-
-    public Command getShootCommand(double speed){
-        Command c = new InstantCommand(()->{setGoalSpeed(speed);
-            stop = false;},this).until(this::isAtGoalSpeed);
-        return LoggedCommand.logCommand(c);
-    }
-    public Command getShootCommand(DoubleSupplier distanceSupplier){
-        Command c = new InstantCommand(()->{
+    public Command getShootCommand(double speed) {
+        Command c = new InstantCommand(() -> {
+            setGoalSpeed(speed);
             stop = false;
-            setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()));
-        },this).until(this::isAtGoalSpeed);
+        }, this).until(this::isAtGoalSpeed);
         return LoggedCommand.logCommand(c);
     }
 
-    private  double getRPMFromDistance(double distance) {
+    /*    public Command getShootCommand(DoubleSupplier distanceSupplier){
+            Command c = new InstantCommand(()->{
+                stop = false;
+                setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()));
+            },this).until(this::isAtGoalSpeed);
+            return LoggedCommand.logCommand(c);
+        }
+    */
+    private double getRPMFromDistance(double distance) {
         double x = distance + 0.60;
         return -102.62602 * Math.pow(x, 4) + 1659.2906 * Math.pow(x, 3) - 9494.24078 * Math.pow(x, 2) + 23465.129 * x - 18598.1388;//todo
     }
 
-    public Command stopShoot(){
-        Command c = new InstantCommand(()->{setGoalSpeed(0);
-        stop = true;});
-        return LoggedCommand.logCommand(c);
+    public void setGoalDistance(double distance) {
+        double speed = getRPMFromDistance(distance);
+        setGoalSpeed(speed);
+    }
+
+    //    public Command stopShoot(){
+//        Command c = new InstantCommand(()->{setGoalSpeed(0);
+//        stop = true;});
+//        return LoggedCommand.logCommand(c);
+//    }
+    public void stopShoot() {
+        setGoalSpeed(1000);
+        stop = true;
     }
 }
 
