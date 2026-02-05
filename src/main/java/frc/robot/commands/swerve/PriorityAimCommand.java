@@ -31,9 +31,18 @@ public class PriorityAimCommand extends LoggedCommand {
         super.execute();
 
         Pose2d robotPose = swerveSubsystem.getPose();
-        Rotation2d rotation2d = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
-
-        swerveSubsystem.setTurnGoal(rotation2d);
+        if (Locations.getAllianceZonePose().contains(robotPose.getTranslation())) {
+            Rotation2d rotation2d = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
+            swerveSubsystem.setTurnGoal(rotation2d);
+        }
+        else if (Locations.getLeftSideMidPose().contains(robotPose.getTranslation())) {
+            Rotation2d rotation2d = Locations.getLeftSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
+            swerveSubsystem.setTurnGoal(rotation2d);
+        }
+        else if (Locations.getRightSideMidPose().contains(robotPose.getTranslation())) {
+            Rotation2d rotation2d = Locations.getRightSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
+            swerveSubsystem.setTurnGoal(rotation2d);
+        }
 
     }
 

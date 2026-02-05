@@ -2,7 +2,9 @@ package frc.robot.math.localization;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class Locations {
     private static double length = 16.54;
@@ -18,6 +20,53 @@ public class Locations {
         Pose2d pose = new Pose2d(4.625,4.035, Rotation2d.kZero );
         return flip(pose);
     }
+    public static Pose2d getLeftSideTarget(){
+
+        Pose2d pose = new Pose2d(4.625,6.075, Rotation2d.kZero );
+        return flip(pose);
+
+    }
+    public static Pose2d getRightSideTarget(){
+
+        Pose2d pose = new Pose2d(4.625,2.025, Rotation2d.kZero );
+        return flip(pose);
+
+    }
+    public static Rectangle2d getAllianceZonePose(){
+        //Center: , X: 4.616, Y: 8.1
+        Translation2d cornerA = new Translation2d(0, 0);
+        Translation2d cornerB = new Translation2d(4.616, 8.1);
+
+        return new Rectangle2d(cornerA, cornerB);
+
+    }
+    public static Rectangle2d getLeftSideMidPose(){
+
+        Translation2d cornerA = new Translation2d(4.616, 4.050);
+        Translation2d cornerB = new Translation2d(11.915, 8.1);
+
+        return new Rectangle2d(cornerA, cornerB);
+
+    }
+    public static Rectangle2d getRightSideMidPose(){
+
+        Translation2d cornerA = new Translation2d(4.616, 0);
+        Translation2d cornerB = new Translation2d(11.915, 4.05);
+
+
+        return new Rectangle2d(flip(cornerA), flip(cornerB));
+
+    }
+    private static Translation2d flip (Translation2d pose) {
+        if (isBlue) {
+            return pose;
+        }
+        double x2 = -pose.getX() + length;
+        double y2 = -pose.getY() + width;
+
+        return new Translation2d(x2,y2);
+    }
+
     private static Pose2d flip (Pose2d pose) {
         if (isBlue) {
             return pose;
