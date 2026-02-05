@@ -15,7 +15,7 @@ public class ShootCommand extends LoggedCommand {
 
     @Override
     public void initialize() {
-
+        super.initialize();
     }
 
     @Override
@@ -31,6 +31,7 @@ public class ShootCommand extends LoggedCommand {
 
     @Override
     public void end(boolean interrupted) {
+        super.end(interrupted);
         this.shootSubsystem.stopShoot();
     }
 }

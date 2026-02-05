@@ -57,10 +57,16 @@ public class ShootSubsystem extends LoggedSubsystem {
         return (motor1.getEncoder().getVelocity() + motor2.getEncoder().getVelocity()) / 2;
     }
 
-    private boolean isAtGoalSpeed() {
+    public boolean isAtGoalSpeed() {
         return Math.abs(goalSpeed - getCurrentVelocity()) < cFlywheelTolerance;
     }
 
+
+    public boolean isDoneShooting() {
+        //todo
+        return true;
+
+    }
 
     public Command getShootCommand(double speed) {
         Command c = new InstantCommand(() -> {
@@ -97,5 +103,6 @@ public class ShootSubsystem extends LoggedSubsystem {
         setGoalSpeed(1000);
         stop = true;
     }
+
 }
 

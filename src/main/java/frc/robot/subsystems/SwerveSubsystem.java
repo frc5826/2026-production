@@ -133,4 +133,9 @@ public class SwerveSubsystem extends LoggedSubsystem {
     public void zeroGyro() {
         swerveDrive.zeroGyro();
     }
+
+    public boolean isAtTurnTarget (){
+        //todo
+        return true;
+    }
 }

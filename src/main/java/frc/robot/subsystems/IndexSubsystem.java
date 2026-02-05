@@ -20,7 +20,7 @@ public class IndexSubsystem extends LoggedSubsystem{
 
     }
 
-    public Command IndexCommand(double speed){
+    public Command getIndexCommand(double speed){
 
         Command command = new InstantCommand(()->{
 
