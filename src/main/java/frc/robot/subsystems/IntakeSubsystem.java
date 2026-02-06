@@ -8,12 +8,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.LoggedCommand;
 
+import static frc.robot.Constants.Intake.cArmMotorSpeed;
+import static frc.robot.Constants.Intake.cMotorIDIntake1;
+
 public class IntakeSubsystem extends LoggedSubsystem {
     private SparkFlex intakeMotor;
     private SparkMax armMotor;
 
     public IntakeSubsystem() {
-        intakeMotor = new SparkFlex(5, SparkLowLevel.MotorType.kBrushless);
+        intakeMotor = new SparkFlex(cMotorIDIntake1, SparkLowLevel.MotorType.kBrushless);
 
 
     }
@@ -28,7 +31,7 @@ public class IntakeSubsystem extends LoggedSubsystem {
     }
 
     public Command intakeDown(double angle) {
-        Command c = new RunCommand(() -> armMotor.set(0.5), this).withTimeout(1).finallyDo(() -> armMotor.set(0));
+        Command c = new RunCommand(() -> armMotor.set(cArmMotorSpeed), this).withTimeout(1).finallyDo(() -> armMotor.set(0));
         return LoggedCommand.logCommand(c);
     }
 

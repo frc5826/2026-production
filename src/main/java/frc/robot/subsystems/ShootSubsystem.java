@@ -6,17 +6,12 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.LoggedCommand;
 import frc.robot.math.FlywheelController;
 import frc.robot.math.PID;
-
-import java.util.function.DoubleSupplier;
 
 import static frc.robot.Constants.Shooter.*;
 
@@ -33,8 +28,8 @@ public class ShootSubsystem extends LoggedSubsystem {
         controller = new FlywheelController(cV, pid, cS);
         SmartDashboard.putData("pid", pid);
         SmartDashboard.putData("controller", controller);
-        motor1 = new SparkFlex(cMotorID1, SparkLowLevel.MotorType.kBrushless);
-        motor2 = new SparkFlex(cMotorID2, SparkLowLevel.MotorType.kBrushless);
+        motor1 = new SparkFlex(cMotorIDShooter1, SparkLowLevel.MotorType.kBrushless);
+        motor2 = new SparkFlex(cMotorIDShooter2, SparkLowLevel.MotorType.kBrushless);
         motor1.configure(new SparkFlexConfig().inverted(false), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         motor2.configure(new SparkFlexConfig().follow(motor1, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }

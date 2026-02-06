@@ -38,7 +38,7 @@ public class CommandGroups {
             return init.alongWith(getShootGroup());
 
         }
-        return new PrintCommand("SomthingTerribleHappenedAndSomthingBroke❌💔");
+        return new PrintCommand("Something Broke");
     }
 
     public Command getShootGroup() {
