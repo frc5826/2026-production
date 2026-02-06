@@ -76,14 +76,14 @@ public class ShootSubsystem extends LoggedSubsystem {
         return LoggedCommand.logCommand(c);
     }
 
-    /*    public Command getShootCommand(DoubleSupplier distanceSupplier){
-            Command c = new InstantCommand(()->{
-                stop = false;
-                setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()));
-            },this).until(this::isAtGoalSpeed);
-            return LoggedCommand.logCommand(c);
-        }
-    */
+    public Command getShootCommand(DoubleSupplier distanceSupplier, boolean repeat) {
+        Command c = new RunCommand(() -> {
+            stop = false;
+            setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()));
+        }, this).until(() -> !repeat && isAtGoalSpeed());
+        return LoggedCommand.logCommand(c);
+    }
+
     private double getRPMFromDistance(double distance) {
         double x = distance + 0.60;
         return -102.62602 * Math.pow(x, 4) + 1659.2906 * Math.pow(x, 3) - 9494.24078 * Math.pow(x, 2) + 23465.129 * x - 18598.1388;//todo
@@ -94,11 +94,11 @@ public class ShootSubsystem extends LoggedSubsystem {
         setGoalSpeed(speed);
     }
 
-    //    public Command stopShoot(){
-//        Command c = new InstantCommand(()->{setGoalSpeed(0);
-//        stop = true;});
-//        return LoggedCommand.logCommand(c);
-//    }
+        public Command getStopCommand(){
+        Command c = new InstantCommand(()->{setGoalSpeed(0);
+        stop = true;});
+        return LoggedCommand.logCommand(c);
+    }
     public void stopShoot() {
         setGoalSpeed(1000);
         stop = true;

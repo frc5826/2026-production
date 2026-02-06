@@ -49,31 +49,29 @@ public class SwerveSubsystem extends LoggedSubsystem {
         SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
 //        swerveDrive.setVisionMeasurementStdDevs();
 
-        turnController = new TurnController(0, 0, 0, 0, 0, 0, 0, ()->swerveDrive.getYaw().getRadians());
+        turnController = new TurnController(0, 0, 0, 0, 0, 0, 0, () -> swerveDrive.getYaw().getRadians());
 
     }
 
-    public void addVisionMeasurement(Pose2d robotPos, double timestamp){
+    public void addVisionMeasurement(Pose2d robotPos, double timestamp) {
 
         swerveDrive.addVisionMeasurement(robotPos, timestamp);
 
     }
+
     //TODO Set turnController to control something
-    public void setTurnGoal(Rotation2d targetAngle){
+    public void setTurnGoal(Rotation2d targetAngle) {
 
         overrideTurn = true;
         turnController.setGoal(targetAngle.getRadians(), swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
 
     }
 
-    public void endTurn(){
+    public void endTurn() {
 
         overrideTurn = false;
 
     }
-
-
-
 
 
     private void setupPathPlanner() {
@@ -110,7 +108,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
     public void teleopDrive(double xSpeed, double ySpeed, double turnSpeed) {
         DriverStation.Alliance alliance = DriverStation.getAlliance().get();
-        if (alliance == DriverStation.Alliance.Red){
+        if (alliance == DriverStation.Alliance.Red) {
             xSpeed = -xSpeed;
             ySpeed = -ySpeed;
         }
@@ -119,7 +117,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
     public void drive(ChassisSpeeds speeds) {
 
-        if (overrideTurn){
+        if (overrideTurn) {
             speeds.omegaRadiansPerSecond = turnController.calculate(0.02);
         }
 
@@ -134,8 +132,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
         swerveDrive.zeroGyro();
     }
 
-    public boolean isAtTurnTarget (){
-        //todo
-        return true;
+    public boolean isAtTurnTarget() {
+        return turnController.isFinished();
     }
 }

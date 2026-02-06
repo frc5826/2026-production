@@ -50,7 +50,7 @@ public class TurnController implements NTSendable {
         return difference;
     }
     public boolean isFinished(){
-        return setpoint.velocity==0;
+        return Math.abs(angleDifference(currentAngle.getAsDouble(), setpoint.position))<Math.toRadians(5);
     }
 
     @Override

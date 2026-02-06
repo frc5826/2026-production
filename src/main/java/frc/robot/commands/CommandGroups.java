@@ -42,16 +42,16 @@ public class CommandGroups {
     }
 
     public Command getShootGroup() {
-        return getSpinUpAim().andThen(
-                new ShootCommand(shoot,camera),index.getIndexCommand(0.3)
-        ).until(shoot::isDoneShooting);
+        return getSpinUpAim().andThen( new PriorityAimCommand(swerve,camera),
+                shoot.getShootCommand(camera::getHubDistance,true),index.getIndexCommand(0.3)
+        ).finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
     }
 
     public Command getSpinUpAim (){
-        return new ShootCommand(shoot,camera).until(shoot::isAtGoalSpeed)
+        return shoot.getShootCommand(camera::getHubDistance,true)
                 .alongWith(
-                        new PriorityAimCommand(swerve,camera).until(swerve::isAtTurnTarget)
-                );
+                        new PriorityAimCommand(swerve,camera)
+                ).until(()-> swerve.isAtTurnTarget()&& shoot.isAtGoalSpeed());
     }
 
 }
