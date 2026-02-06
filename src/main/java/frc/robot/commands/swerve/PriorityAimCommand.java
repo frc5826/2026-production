@@ -20,7 +20,7 @@ public class PriorityAimCommand extends LoggedCommand {
         this.cameraSubsystem = cameraSubsystem;
 
     }
-//TODO Change Priority Based on Location on Field
+
     @Override
     public void initialize() {
         super.initialize();

@@ -7,16 +7,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.LoggedCommand;
 
+import static frc.robot.Constants.Index.cMotorIDIndex1;
+import static frc.robot.Constants.Index.cMotorIDIndex2;
+
 public class IndexSubsystem extends LoggedSubsystem{
 
     private SparkMax innerIndexerMotor;
     private SparkMax outerIndexNConveyMotor;
 
-//TODO Find SparkMax ID's
     public IndexSubsystem () {
 
-        innerIndexerMotor = new SparkMax(1, SparkLowLevel.MotorType.kBrushless);
-        outerIndexNConveyMotor = new SparkMax(2, SparkLowLevel.MotorType.kBrushless);
+        innerIndexerMotor = new SparkMax(cMotorIDIndex1, SparkLowLevel.MotorType.kBrushless);
+        outerIndexNConveyMotor = new SparkMax(cMotorIDIndex2, SparkLowLevel.MotorType.kBrushless);
 
     }
 
