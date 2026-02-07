@@ -33,7 +33,6 @@ public class LoggedCommand extends Command {
             command.initialize();
     }
 
-
     @Override
     public void execute() {
         super.execute();

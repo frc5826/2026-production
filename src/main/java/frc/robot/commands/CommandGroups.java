@@ -11,18 +11,28 @@ public class CommandGroups {
     private CameraSubsystem camera;
     private ClimbSubsystem climb;
     private HoodSubsystem hood;
-    private IndexSubsystem index;
+    private ConveyorSubsystem conveyor;
     private IntakeSubsystem intake;
-    private LoggedCommand logged;
     private ShootSubsystem shoot;
     private SwerveSubsystem swerve;
+    private IndexSubsystem index;
+
 
     private String[] autoNames = new String[]{
             "empty", "shootOnly"
     };
     private SendableChooser<String> autoChooser = new SendableChooser<>();
 
-    public CommandGroups() {
+    public CommandGroups(CameraSubsystem camera, ClimbSubsystem climb, HoodSubsystem hood, ConveyorSubsystem conveyor, IntakeSubsystem intake, ShootSubsystem shoot, SwerveSubsystem swerve, IndexSubsystem index) {
+        this.camera = camera;
+        this.climb = climb;
+        this.hood = hood;
+        this.conveyor = conveyor;
+        this.intake = intake;
+        this.shoot = shoot;
+        this.swerve = swerve;
+        this.index = index;
+
         for (String name : autoNames) {
             autoChooser.addOption(name, name);
         }
@@ -42,16 +52,19 @@ public class CommandGroups {
     }
 
     public Command getShootGroup() {
-        return getSpinUpAim().andThen( new PriorityAimCommand(swerve,camera),
-                shoot.getShootCommand(camera::getHubDistance,true),index.getIndexCommand(0.3)
-        ).finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
+        return getSpinUpAim().andThen(new PriorityAimCommand(swerve, camera),
+                shoot.getShootCommand(camera::getHubDistance, true), getIndeyor())
+                .finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
     }
 
-    public Command getSpinUpAim (){
-        return shoot.getShootCommand(camera::getHubDistance,true)
+    public Command getSpinUpAim() {
+        return shoot.getShootCommand(camera::getHubDistance, true)
                 .alongWith(
-                        new PriorityAimCommand(swerve,camera)
-                ).until(()-> swerve.isAtTurnTarget()&& shoot.isAtGoalSpeed());
+                        new PriorityAimCommand(swerve, camera)
+                ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
+    }
+    public Command getIndeyor(){
+        return conveyor.getConveyorCommand().alongWith(index.getIndexCommand());
     }
 
 }

@@ -8,20 +8,20 @@ import frc.robot.commands.LoggedCommand;
 
 import static frc.robot.Constants.Index.*;
 
-public class IndexSubsystem extends LoggedSubsystem {
+public class ConveyorSubsystem extends LoggedSubsystem {
 
     private SparkMax motor;
 
-    public IndexSubsystem() {
+    public ConveyorSubsystem() {
 
-        motor = new SparkMax(cInnerIndex, SparkLowLevel.MotorType.kBrushless);
+        motor = new SparkMax(cOuterIndex, SparkLowLevel.MotorType.kBrushless);
     }
 
-    public Command getIndexCommand() {
+    public Command getConveyorCommand() {
 
         Command command = new InstantCommand(() -> {
 
-            motor.set(cIndexerSpeed);
+            motor.set(cConveyorSpeed);
         }, this).finallyDo(() -> {
 
             motor.set(0);

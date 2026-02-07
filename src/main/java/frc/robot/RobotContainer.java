@@ -9,15 +9,10 @@ import com.ctre.phoenix6.SignalLogger;
 import com.revrobotics.util.StatusLogger;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CommandGroups;
-import frc.robot.commands.ShootCommand;
-import frc.robot.commands.swerve.PriorityAimCommand;
-import frc.robot.commands.swerve.TeleopDriveCommand;
 import frc.robot.subsystems.*;
 
 import java.io.File;
@@ -27,13 +22,16 @@ public class RobotContainer {
 
     public ShootSubsystem shoot = new ShootSubsystem();
     public SwerveSubsystem swerve = new SwerveSubsystem();
+    public HoodSubsystem hood = new HoodSubsystem();
+    public ClimbSubsystem climb = new ClimbSubsystem();
     public CameraSubsystem cameras = new CameraSubsystem(swerve::addVisionMeasurement);
+    public IntakeSubsystem intake = new IntakeSubsystem();
+    public ConveyorSubsystem conveyor = new ConveyorSubsystem();
+    public IndexSubsystem index = new IndexSubsystem();
+
     public XboxController xbox = new XboxController(1);
-     public IntakeSubsystem intake = new IntakeSubsystem();
-     public IndexSubsystem index = new IndexSubsystem();
-     public ShootCommand shootCommand = new ShootCommand(shoot, cameras);
-     public PriorityAimCommand priorityAim = new PriorityAimCommand(swerve, cameras);
-     public CommandGroups commandGroups = new CommandGroups();
+
+    public CommandGroups commandGroups = new CommandGroups(cameras, climb, hood, conveyor, intake, shoot, swerve, index);
 
     public RobotContainer() {
         if (new File("/U/logs").isDirectory()) {
@@ -49,12 +47,14 @@ public class RobotContainer {
 
     private void configureBindings() {
 
-        new Trigger(()->xbox.getLeftTriggerAxis()>0.5).whileTrue(intake.getIntakeCommand(0.5));
-        new Trigger(()->xbox.getRightBumperButton()).onTrue(shootCommand);
-        new Trigger(()->xbox.getRightTriggerAxis()>0.5).whileTrue(commandGroups.getShootGroup());
-        new Trigger(()->xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand(0.5));
-        new Trigger(()->xbox.getLeftBumperButton()).toggleOnTrue(priorityAim);
-
+        new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).whileTrue(intake.getIntakeCommand(0.5));
+        new Trigger(() -> xbox.getRightBumperButton()).onTrue(commandGroups.getSpinUpAim());
+        new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
+        new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand(0.5));
+        new Trigger(() -> xbox.getLeftBumperButton()).toggleOnTrue(commandGroups.getSpinUpAim());
+        new Trigger(() -> xbox.getXButton()).whileTrue(intake.intakeDown());
+        new Trigger(() -> xbox.getBButton()).whileTrue(conveyor.getConveyorCommand());
+        //
         //new Trigger(()->xbox.getLeftTriggerAxis()>0.25).toggleOnTrue(end priority aim);
         //new Trigger(()->xbox.getYButton()).toggleOnTrue(climb);
 

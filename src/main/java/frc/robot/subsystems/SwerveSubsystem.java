@@ -11,7 +11,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.LoggedCommand;
 import frc.robot.math.TurnController;
@@ -135,4 +137,26 @@ public class SwerveSubsystem extends LoggedSubsystem {
     public boolean isAtTurnTarget() {
         return turnController.isFinished();
     }
+
+    public Command calibrationCommand() {
+        Command c = new InstantCommand(() -> {
+            swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(0, 0, 0));
+            swerveDrive.resetOdometry(Pose2d.kZero);
+            swerveDrive.resetDriveEncoders();
+        }).andThen(new RunCommand(() -> {
+            swerveDrive.drive(new ChassisSpeeds(1, 0, 0));
+            SmartDashboard.putNumber("Calibration/Speed", swerveDrive.getRobotVelocity().vxMetersPerSecond);
+            SmartDashboard.putNumber("Calibration/Distance📡", swerveDrive.getPose().getX());
+        }));
+        return c;
+    }
+
+//    {
+//        "drive": {
+//        "p": 0.0020645,
+//                "i": 0,
+//                "d": 0,
+//                "f": 0.2,
+//                "iz": 0
+//    },
 }
