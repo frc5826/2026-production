@@ -10,17 +10,18 @@ import static frc.robot.Constants.Hood.*;
 
 public class HoodSubsystem extends LoggedSubsystem{
     private SparkMax motor;
-    private DutyCycleEncoder absoluteEncoder;
-    private Encoder relativeEncoder;
+//    private DutyCycleEncoder absoluteEncoder;
+//    private Encoder relativeEncoder;
     private PID pid;
 
     public HoodSubsystem(){
         motor=new SparkMax(cMotorID, SparkLowLevel.MotorType.kBrushless);
-        absoluteEncoder=new DutyCycleEncoder(cAbsoluteEncodeID);
-        relativeEncoder=new Encoder(cEncoderIDA, cEncoderIDB);
+//        absoluteEncoder=new DutyCycleEncoder(cAbsoluteEncodeID);
+//        relativeEncoder=new Encoder(cEncoderIDA, cEncoderIDB);
     }
     public double getAngle(){
-        double rotations=absoluteEncoder.get()+relativeEncoder.get()+cAngleOffset;
-        return rotations*360*cConversionFactor;
+//        double rotations=relativeEncoder.get()+cAngleOffset;
+//        return rotations*360*cConversionFactor;
+        return 0;
     }
 }

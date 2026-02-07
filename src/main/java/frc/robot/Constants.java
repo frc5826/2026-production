@@ -26,15 +26,15 @@ public class Constants {
 
     public static class Intake {
         public static final int cMotorIDIntake1 = 5;
-        public static final double cArmMotorSpeed = 0.5;
-        public static final int cArmMotor = 6;
-        public static final int cArmMotorFollower = 7;
+        public static final double cArmMotorSpeed = 0.2;
+        public static final int cArmMotor = 7;
+        public static final int cArmMotorFollower = 6;
     }
     public static class Index {
         public static final int cInnerIndex = 15;
         public static final int cOuterIndex = 8;
         public static final double cIndexerSpeed = 0.2;
-        public static final double cConveyorSpeed = 0.2;
+        public static final double cConveyorSpeed = 1;
 
     }
     public static class Climb{
@@ -44,7 +44,7 @@ public class Constants {
     1-4 swerve drive driver
     5 intake roller
     6-7 intake arm
-    8 index motor
+    8 conveyor
     9-10 shooter
     11-14 swerve drive angle
     15 inner indexer

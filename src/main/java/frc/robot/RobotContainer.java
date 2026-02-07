@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CommandGroups;
+import frc.robot.commands.swerve.TeleopDriveCommand;
 import frc.robot.subsystems.*;
 
 import java.io.File;
@@ -41,6 +42,8 @@ public class RobotContainer {
         StatusLogger.disableAutoLogging();
 
         configureBindings();
+
+        swerve.setDefaultCommand(new TeleopDriveCommand(swerve,xbox));
 
     }
 

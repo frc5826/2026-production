@@ -12,14 +12,15 @@ public class LoggedCommand extends Command {
     private LoggedCommand (Command command  ) {
         this.command = command;
         CommandScheduler.getInstance().registerComposedCommands(command);
-        setName(command.getName());
     }
     public LoggedCommand () {
         command = this;
     }
 
-    public static Command logCommand(Command command) {
-        return new LoggedCommand(command);
+    public static Command logCommand(Command command, String name) {
+        Command c = new LoggedCommand(command);
+        c.setName(name);
+        return c;
     }
 
     @Override

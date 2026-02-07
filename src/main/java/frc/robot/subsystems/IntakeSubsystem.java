@@ -22,6 +22,7 @@ public class IntakeSubsystem extends LoggedSubsystem {
 
     public IntakeSubsystem() {
         intakeMotor = new SparkFlex(cMotorIDIntake1, SparkLowLevel.MotorType.kBrushless);
+        intakeMotor.configure(new SparkFlexConfig().inverted(true),ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
         armMotor = new SparkMax(cArmMotor, SparkLowLevel.MotorType.kBrushless);
         armMotorFollower = new SparkMax(cArmMotorFollower, SparkLowLevel.MotorType.kBrushless);
         SparkBaseConfig config = new SparkMaxConfig().smartCurrentLimit(20);
