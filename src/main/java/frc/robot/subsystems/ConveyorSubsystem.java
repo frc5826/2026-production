@@ -28,7 +28,7 @@ public class ConveyorSubsystem extends LoggedSubsystem {
             motor.set(0);
         });
         command.setName("Conveyor Command");
-        return LoggedCommand.logCommand(command);
+        return LoggedCommand.logCommand(command, "Conveyor Command");
 
 
     }

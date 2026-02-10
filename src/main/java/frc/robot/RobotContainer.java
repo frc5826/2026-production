@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.swerve.TeleopDriveCommand;
@@ -55,8 +56,9 @@ public class RobotContainer {
         new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
         new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand(0.5));
         new Trigger(() -> xbox.getLeftBumperButton()).toggleOnTrue(commandGroups.getSpinUpAim());
-        new Trigger(() -> xbox.getXButton()).whileTrue(intake.intakeDown());
+        new Trigger(() -> xbox.getXButton()).onTrue(intake.intakeDown());
         new Trigger(() -> xbox.getBButton()).whileTrue(conveyor.getConveyorCommand());
+        new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
         //
         //new Trigger(()->xbox.getLeftTriggerAxis()>0.25).toggleOnTrue(end priority aim);
         //new Trigger(()->xbox.getYButton()).toggleOnTrue(climb);

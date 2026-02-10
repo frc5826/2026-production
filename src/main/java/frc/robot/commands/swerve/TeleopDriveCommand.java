@@ -26,15 +26,21 @@ public class TeleopDriveCommand extends LoggedCommand {
         double ySpeed = -xboxController.getLeftX();
         double turnSpeed = -xboxController.getRightX();
 
-        if (Math.abs(xSpeed)<0.1){
+        if (Math.abs(xSpeed)<0.06){
             xSpeed = 0;
         }
-        if(Math.abs(ySpeed)<0.1){
+        if(Math.abs(ySpeed)<0.06){
             ySpeed = 0;
         }
-        if(Math.abs(turnSpeed)<0.1){
+        if(Math.abs(turnSpeed)<0.06){
             turnSpeed = 0;
         }
+
+        xSpeed = Math.signum(xSpeed)*Math.pow(xSpeed,2);
+        ySpeed = Math.signum(ySpeed)*Math.pow(ySpeed,2);
+        turnSpeed = Math.signum(turnSpeed)*Math.pow(turnSpeed,2);
+
+
         double multiplier = swerve.getMaxSpeed();
         swerve.teleopDrive(xSpeed * multiplier, ySpeed * multiplier, turnSpeed * multiplier);
 

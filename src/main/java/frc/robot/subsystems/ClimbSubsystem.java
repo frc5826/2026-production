@@ -22,12 +22,12 @@ public class ClimbSubsystem extends LoggedSubsystem {
     }
     public Command climbCommand () {
         Command c = new InstantCommand(this::climb,this);
-        return LoggedCommand.logCommand(c);
+        return LoggedCommand.logCommand(c,"Climb Command");
     }
 
     public Command downCommand () {
         Command c = new InstantCommand(this::down, this);
-        return LoggedCommand.logCommand(c);
+        return LoggedCommand.logCommand(c, "Down Command");
     }
 }
 

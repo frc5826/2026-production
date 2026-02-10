@@ -28,7 +28,7 @@ public class IndexSubsystem extends LoggedSubsystem {
             motor.set(0);
         });
 
-        return LoggedCommand.logCommand(command);
+        return LoggedCommand.logCommand(command, "Index Command");
 
 
     }

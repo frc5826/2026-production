@@ -104,7 +104,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
     public Command getLockCommand() {
         Command c = new RunCommand(swerveDrive::lockPose, this);
-        return LoggedCommand.logCommand(c);
+        return LoggedCommand.logCommand(c, "Locked Command");
 
     }
 
