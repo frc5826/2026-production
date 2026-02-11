@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -9,6 +11,7 @@ import org.opencv.photo.Photo;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,14 +23,12 @@ import java.util.function.Function;
 
 public class CameraSubsystem extends SubsystemBase {
     private List<Camera> cameras = new ArrayList<>(5);
-    private Field2d field = new Field2d();
-    private double hubDistance = 0;
+    private AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
     private BiConsumer<Pose2d, Double> odometry;
 
     public CameraSubsystem(BiConsumer<Pose2d, Double> odometry) {
 
         this.odometry = odometry;
-        SmartDashboard.putData("field", field);
         cameras.add(
                 new Camera("Arducam_1", new Translation3d(0, 0, 0), new Rotation3d())
         );
@@ -37,29 +38,29 @@ public class CameraSubsystem extends SubsystemBase {
         List<PhotonPipelineResult> results = camera.photon.getAllUnreadResults();
         if (!results.isEmpty()) {
             PhotonPipelineResult result = results.get(results.size() - 1);
+            Pose3d cameraPose;
             if (result.getMultiTagResult().isPresent()) {
-                Transform3d cameraTransform = result.getMultiTagResult().get().estimatedPose.best;
-                Pose2d cameraPose = Pose3d.kZero.plus(cameraTransform).toPose2d();
-                Pose3d robotPose = Pose3d.kZero.plus(cameraTransform).plus(camera.robotToCamera.inverse());
-                odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds());
-                hubDistance = cameraPose.getTranslation().getDistance(Locations.getHubPose().getTranslation());
-                field.setRobotPose(cameraPose);
-            }
+                cameraPose = Pose3d.kZero.plus(result.getMultiTagResult().get().estimatedPose.best);
+            } else {
+                PhotonTrackedTarget target = result.getBestTarget();
+                if (target.getPoseAmbiguity() > 0.2) {
+                    return;
+                }
+                cameraPose = layout.getTagPose(target.fiducialId).get().plus(target.bestCameraToTarget);
 
+            }
+            Pose3d robotPose = cameraPose.plus(camera.robotToCamera.inverse());
+            odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds());
         }
 
     }
 
-    public double getHubDistance() {
-        return hubDistance;
-    }
 
     @Override
     public void periodic() {
         for (Camera c : cameras) {
             getCameraValues(c);
         }
-        SmartDashboard.putNumber("shoot/hub",getHubDistance());
     }
 
     private record Camera(PhotonCamera photon, Transform3d robotToCamera) {

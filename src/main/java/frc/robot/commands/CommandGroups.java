@@ -46,7 +46,7 @@ public class CommandGroups {
     public Command getAuto() {
         //Things that happen every time in auto go in init.
         //todo
-        Command init = new InstantCommand();
+        Command init = new InstantCommand().alongWith(intake.intakeDown());
         if (autoChooser.getSelected().equals("empty")) {
             return init;
         } else if (autoChooser.getSelected().equals("shootOnly")) {
@@ -58,12 +58,12 @@ public class CommandGroups {
 
     public Command getShootGroup() {
         return getSpinUpAim().andThen(new PriorityAimCommand(swerve, camera),
-                shoot.getShootCommand(camera::getHubDistance, true), getIndeyor())
+                shoot.getShootCommand(swerve::getHubDistance, true), getIndeyor())
                 .finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
     }
 
     public Command getSpinUpAim() {
-        return shoot.getShootCommand(camera::getHubDistance, true)
+        return shoot.getShootCommand(swerve::getHubDistance, true)
                 .alongWith(
                         new PriorityAimCommand(swerve, camera)
                 ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());

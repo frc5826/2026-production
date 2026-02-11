@@ -27,20 +27,18 @@ public class LoggedCommand extends Command {
     public void initialize() {
         for (Subsystem s:getRequirements()) {
             if (s instanceof LoggedSubsystem) {
-                ((LoggedSubsystem) s).Log(getName()+".initialize");
+                ((LoggedSubsystem) s).Log(getName()+Integer.toHexString(System.identityHashCode(this))+".initialize");
             }
         }
         if (command != this)
             command.initialize();
     }
-
     @Override
     public void execute() {
         super.execute();
         if (command != this)
             command.execute();
     }
-
     @Override
     public boolean isFinished() {
         if (command != this)
@@ -53,7 +51,7 @@ public class LoggedCommand extends Command {
         super.end(interrupted);
         for (Subsystem s:getRequirements()) {
             if (s instanceof LoggedSubsystem) {
-                ((LoggedSubsystem) s).Log(getName()+".end");
+                ((LoggedSubsystem) s).Log(getName()+Integer.toHexString(System.identityHashCode(this))+".end");
             }
         }
         if (command != this)
