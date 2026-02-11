@@ -1,12 +1,19 @@
 package frc.robot.commands;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.swerve.PriorityAimCommand;
+import frc.robot.math.localization.Locations;
 import frc.robot.subsystems.*;
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
 
 public class CommandGroups {
     private CameraSubsystem camera;
@@ -20,7 +27,10 @@ public class CommandGroups {
 
 
     private String[] autoNames = new String[]{
-             "shootOnly"
+             "shootOnly",
+             "depotGrab+Shoot",
+             "humanPlayerGrab+Shoot",
+             "runOutToMiddle+Shoot"
     };
     private SendableChooser<String> autoChooser = new SendableChooser<>();
 
@@ -43,7 +53,7 @@ public class CommandGroups {
         SmartDashboard.putData("5826/Auto",autoChooser);
     }
 
-    public Command getAuto() {
+    public Command getAuto() throws IOException, ParseException {
         //Things that happen every time in auto go in init.
         //todo
         Command init = new InstantCommand().alongWith(intake.intakeDown());
@@ -52,8 +62,32 @@ public class CommandGroups {
         } else if (autoChooser.getSelected().equals("shootOnly")) {
             return init.alongWith(getShootGroup());
 
+        } else if (autoChooser.getSelected().equals("depotGrab+Shoot")) {
+            return init.alongWith(intake.getIntakeCommand(), getPathCommand("toDepotCommand"))
+                    .andThen(getPathCommand("awayDepotCommand"))
+                    .andThen(getShootGroup());
+
+        } else if (autoChooser.getSelected().equals("humanPlayerGrab+Shoot")) {
+            return AutoBuilder.buildAuto("toHumanPlayerPath")
+                    .andThen(AutoBuilder.buildAuto("awayHumanPlayerPath"))
+                    .andThen(getShootGroup());
+
+        } else if (autoChooser.getSelected().equals("runOutToMiddle+Shoot")) {
+            if (Locations.getLeftAllianceZonePose().contains(swerve.getPose().getTranslation()))
+                return AutoBuilder.buildAuto("DepotPath").andThen(getShootGroup()); //TODO
+
         }
+
         return new PrintCommand("Something Broke");
+    }
+
+    public Command getPathCommand(String commandName){
+        try{
+            return AutoBuilder.followPath(PathPlannerPath.fromPathFile(commandName));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return new InstantCommand();
     }
 
     public Command getShootGroup() {
@@ -69,8 +103,10 @@ public class CommandGroups {
                 ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
     }
     public Command getIndeyor(){
-        return conveyor.getConveyorCommand().alongWith(index.getIndexCommand());
+        return conveyor.getConveyorCommand().alongWith(index.getIndexCommand(), intake.getIntakeCommand());
     }
+
+
 
 }
 

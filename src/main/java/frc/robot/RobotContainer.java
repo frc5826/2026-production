@@ -51,10 +51,9 @@ public class RobotContainer {
 
     private void configureBindings() {
 
-        new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).whileTrue(intake.getIntakeCommand(0.5));
         new Trigger(() -> xbox.getRightBumperButton()).onTrue(commandGroups.getSpinUpAim());
         new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
-        new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand(0.5));
+        new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
         new Trigger(() -> xbox.getLeftBumperButton()).toggleOnTrue(commandGroups.getSpinUpAim());
         new Trigger(() -> xbox.getXButton()).onTrue(intake.intakeDown());
         new Trigger(() -> xbox.getBButton()).whileTrue(conveyor.getConveyorCommand());

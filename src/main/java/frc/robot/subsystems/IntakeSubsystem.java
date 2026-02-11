@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.commands.LoggedCommand;
 
 import static frc.robot.Constants.Intake.*;
@@ -40,8 +41,8 @@ public class IntakeSubsystem extends LoggedSubsystem {
         SmartDashboard.putNumber("5826/Intake/ArmPosition", armMotor.getEncoder().getPosition());
     }
 
-    public Command getIntakeCommand(double speed) {
-        Command c = new RunCommand(() -> setSpeed(speed), this).finallyDo(() -> setSpeed(0));
+    public Command getIntakeCommand() {
+        Command c = new RunCommand(() -> setSpeed(cSpeed), this).finallyDo(() -> setSpeed(0));
         return LoggedCommand.logCommand(c, "Intake Command");
     }
 
@@ -50,10 +51,11 @@ public class IntakeSubsystem extends LoggedSubsystem {
     }
 
     public Command intakeDown() {
+        Subsystem subsystem = new LoggedSubsystem();
         Command c = new RunCommand(() -> {
             armMotor.set(cArmMotorSpeed);
             armMotorFollower.set(cArmMotorSpeed);
-        }, this).withTimeout(1.5)
+        }, subsystem).withTimeout(1.5)
                 .finallyDo(() -> {
                     armMotor.getClosedLoopController().setSetpoint(0, SparkBase.ControlType.kPosition);
                     armMotor.getEncoder().setPosition(0);

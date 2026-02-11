@@ -15,6 +15,11 @@ public class Locations {
     private Locations () {
 
     }
+    public static Pose2d getDepotPose () {
+        //0.758, 5.948
+        Pose2d pose = new Pose2d(0.758, 5.948, Rotation2d.kZero);
+        return flip(pose);
+    }
     public static Pose2d getHubPose () {
         //4.625x, 4.035y
         Pose2d pose = new Pose2d(4.625,4.035, Rotation2d.kZero );
@@ -32,12 +37,26 @@ public class Locations {
         return flip(pose);
 
     }
+    public static Rectangle2d getLeftAllianceZonePose(){
+
+        Translation2d cornerA = new Translation2d(0, 4);
+        Translation2d cornerB = new Translation2d(3.975, 8);
+
+        return new Rectangle2d(flip(cornerA), flip(cornerB));
+    }
+    public static Rectangle2d getRightAllianceZonePose(){
+
+        Translation2d cornerA = new Translation2d(0, 0);
+        Translation2d cornerB = new Translation2d(3.975, 4);
+
+        return new Rectangle2d(flip(cornerA), flip(cornerB));
+    }
     public static Rectangle2d getAllianceZonePose(){
         //Center: , X: 4.616, Y: 8.1
         Translation2d cornerA = new Translation2d(0, 0);
         Translation2d cornerB = new Translation2d(4.616, 8.1);
 
-        return new Rectangle2d(cornerA, cornerB);
+        return new Rectangle2d(flip(cornerA) , flip(cornerB));
 
     }
     public static Rectangle2d getLeftSideMidPose(){
@@ -45,7 +64,7 @@ public class Locations {
         Translation2d cornerA = new Translation2d(4.616, 4.050);
         Translation2d cornerB = new Translation2d(11.915, 8.1);
 
-        return new Rectangle2d(cornerA, cornerB);
+        return new Rectangle2d(flip(cornerA), flip(cornerB));
 
     }
     public static Rectangle2d getRightSideMidPose(){

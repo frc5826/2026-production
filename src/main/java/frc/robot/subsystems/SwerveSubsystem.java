@@ -72,6 +72,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
     //TODO Set turnController to control something
     public void setTurnGoal(Rotation2d targetAngle) {
+
         overrideTurn = true;
         turnController.setGoal(targetAngle.getRadians(), swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
 
@@ -154,16 +155,10 @@ public class SwerveSubsystem extends LoggedSubsystem {
         }).andThen(new RunCommand(() -> {
             swerveDrive.drive(new ChassisSpeeds(1, 0, 0));
             SmartDashboard.putNumber("Calibration/Speed", swerveDrive.getRobotVelocity().vxMetersPerSecond);
-            SmartDashboard.putNumber("Calibration/Distance", swerveDrive.getPose().getX());
+            SmartDashboard.putNumber("Calibration/Distance📡", swerveDrive.getPose().getX());
         }));
         return c;
     }
-
-    public double getHubDistance() {
-        return getPose().getTranslation().getDistance(Locations.getHubPose().getTranslation());
-
-    }
-
 
 //    {
 //        "drive": {
