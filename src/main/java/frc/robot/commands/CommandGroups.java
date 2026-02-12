@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +23,7 @@ public class CommandGroups {
     private ShootSubsystem shoot;
     private SwerveSubsystem swerve;
     private IndexSubsystem index;
+    private SensorSubsystem sensor;
 
 
     private String[] autoNames = new String[]{
@@ -34,7 +34,7 @@ public class CommandGroups {
     };
     private SendableChooser<String> autoChooser = new SendableChooser<>();
 
-    public CommandGroups(CameraSubsystem camera, ClimbSubsystem climb, HoodSubsystem hood, ConveyorSubsystem conveyor, IntakeSubsystem intake, ShootSubsystem shoot, SwerveSubsystem swerve, IndexSubsystem index) {
+    public CommandGroups(CameraSubsystem camera, ClimbSubsystem climb, HoodSubsystem hood, ConveyorSubsystem conveyor, IntakeSubsystem intake, ShootSubsystem shoot, SwerveSubsystem swerve, IndexSubsystem index, SensorSubsystem sensor) {
         this.camera = camera;
         this.climb = climb;
         this.hood = hood;
@@ -43,6 +43,7 @@ public class CommandGroups {
         this.shoot = shoot;
         this.swerve = swerve;
         this.index = index;
+        this.sensor = sensor;
 
 
         for (String name : autoNames) {
@@ -68,13 +69,16 @@ public class CommandGroups {
                     .andThen(getShootGroup());
 
         } else if (autoChooser.getSelected().equals("humanPlayerGrab+Shoot")) {
-            return AutoBuilder.buildAuto("toHumanPlayerPath")
+            return AutoBuilder.buildAuto("toHumanPlayerPath").until(sensor.getBeamBreak())
                     .andThen(AutoBuilder.buildAuto("awayHumanPlayerPath"))
                     .andThen(getShootGroup());
 
         } else if (autoChooser.getSelected().equals("runOutToMiddle+Shoot")) {
             if (Locations.getLeftAllianceZonePose().contains(swerve.getPose().getTranslation()))
-                return AutoBuilder.buildAuto("DepotPath").andThen(getShootGroup()); //TODO
+                return getInteyor().alongWith(AutoBuilder.buildAuto("toMiddleFromLeftPath").andThen(getShootGroup()));
+            else if (Locations.getRightAllianceZonePose().contains(swerve.getPose().getTranslation())) {
+                return getInteyor().alongWith(AutoBuilder.buildAuto("toMiddleFromRightPath").andThen(getShootGroup()));
+            }
 
         }
 
@@ -92,19 +96,21 @@ public class CommandGroups {
 
     public Command getShootGroup() {
         return getSpinUpAim().andThen(new PriorityAimCommand(swerve, camera),
-                shoot.getShootCommand(swerve::getHubDistance, true), getIndeyor())
+                shoot.getShootCommand(swerve::getHubDistance, true), getInteyor())
                 .finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
     }
 
     public Command getSpinUpAim() {
-        return shoot.getShootCommand(swerve::getHubDistance, true)
+        return shoot.getShootCommand(camera::getHubDistance, true)
                 .alongWith(
                         new PriorityAimCommand(swerve, camera)
                 ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
     }
-    public Command getIndeyor(){
+    public Command getInteyor(){
         return conveyor.getConveyorCommand().alongWith(index.getIndexCommand(), intake.getIntakeCommand());
     }
+
+
 
 
 

@@ -30,10 +30,11 @@ public class RobotContainer {
     public IntakeSubsystem intake = new IntakeSubsystem();
     public ConveyorSubsystem conveyor = new ConveyorSubsystem();
     public IndexSubsystem index = new IndexSubsystem();
+    public SensorSubsystem sensor = new SensorSubsystem();
 
     public XboxController xbox = new XboxController(1);
 
-    public CommandGroups commandGroups = new CommandGroups(cameras, climb, hood, conveyor, intake, shoot, swerve, index);
+    public CommandGroups commandGroups = new CommandGroups(cameras, climb, hood, conveyor, intake, shoot, swerve, index, sensor);
 
     public RobotContainer() {
         if (new File("/U/logs").isDirectory()) {
