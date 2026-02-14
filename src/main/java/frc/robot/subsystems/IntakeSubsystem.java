@@ -29,7 +29,8 @@ public class IntakeSubsystem extends LoggedSubsystem {
         intakeMotor.configure(new SparkFlexConfig().inverted(true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         armMotor = new SparkMax(cArmMotor, SparkLowLevel.MotorType.kBrushless);
         armMotorFollower = new SparkMax(cArmMotorFollower, SparkLowLevel.MotorType.kBrushless);
-        SparkBaseConfig config = new SparkMaxConfig().smartCurrentLimit(20).apply(new ClosedLoopConfig().p(0.2).outputRange(-0.2,0.2));
+        SparkBaseConfig config = new SparkMaxConfig().smartCurrentLimit(20)
+                .apply(new ClosedLoopConfig().p(0.2).outputRange(-0.2,0.2)).idleMode(SparkBaseConfig.IdleMode.kCoast);
         armMotor.configure(config.inverted(false), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         armMotorFollower.configure(config.inverted(true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
