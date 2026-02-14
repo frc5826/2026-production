@@ -34,7 +34,7 @@ public class Constants {
     public static class Index {
         public static final int cInnerIndex = 15;
         public static final int cOuterIndex = 8;
-        public static final double cIndexerSpeed = 0.2;
+        public static final double cIndexerSpeed = 1;
         public static final double cConveyorSpeed = 1;
 
     }

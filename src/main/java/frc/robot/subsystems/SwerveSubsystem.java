@@ -159,6 +159,10 @@ public class SwerveSubsystem extends LoggedSubsystem {
         return c;
     }
 
+    public double getHubDistance() {
+        return getPose().getTranslation().getDistance(Locations.getHubPose().getTranslation());
+    }
+
 //    {
 //        "drive": {
 //        "p": 0.0020645,

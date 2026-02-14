@@ -30,7 +30,7 @@ public class CameraSubsystem extends SubsystemBase {
 
         this.odometry = odometry;
         cameras.add(
-                new Camera("Arducam_1", new Translation3d(0, 0, 0), new Rotation3d())
+                new Camera("Arducam_1", new Translation3d(32.25, 0.0025, 29), new Rotation3d(0, -Math.toRadians(9), 0))
         );
     }
 
@@ -39,18 +39,20 @@ public class CameraSubsystem extends SubsystemBase {
         if (!results.isEmpty()) {
             PhotonPipelineResult result = results.get(results.size() - 1);
             Pose3d cameraPose;
-            if (result.getMultiTagResult().isPresent()) {
-                cameraPose = Pose3d.kZero.plus(result.getMultiTagResult().get().estimatedPose.best);
-            } else {
-                PhotonTrackedTarget target = result.getBestTarget();
-                if (target.getPoseAmbiguity() > 0.2) {
-                    return;
-                }
-                cameraPose = layout.getTagPose(target.fiducialId).get().plus(target.bestCameraToTarget);
+            if (result.hasTargets()) {
+                if (result.getMultiTagResult().isPresent()) {
+                    cameraPose = Pose3d.kZero.plus(result.getMultiTagResult().get().estimatedPose.best);
+                } else {
+                    PhotonTrackedTarget target = result.getBestTarget();
+                    if (target.getPoseAmbiguity() > 0.2) {
+                        return;
+                    }
+                    cameraPose = layout.getTagPose(target.fiducialId).get().plus(target.bestCameraToTarget);
 
+                }
+                Pose3d robotPose = cameraPose.plus(camera.robotToCamera.inverse());
+                odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds());
             }
-            Pose3d robotPose = cameraPose.plus(camera.robotToCamera.inverse());
-            odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds());
         }
 
     }

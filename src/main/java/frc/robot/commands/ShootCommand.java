@@ -20,7 +20,7 @@ public class ShootCommand extends LoggedCommand {
 
     @Override
     public void execute() {
-        double hubDistance = this.cameraSubsystem.getHubDistance();
+        double hubDistance = 0;
         this.shootSubsystem.setGoalDistance(hubDistance);
     }
 

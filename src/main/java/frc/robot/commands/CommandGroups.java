@@ -54,7 +54,7 @@ public class CommandGroups {
         SmartDashboard.putData("5826/Auto",autoChooser);
     }
 
-    public Command getAuto() throws IOException, ParseException {
+    public Command getAuto() {
         //Things that happen every time in auto go in init.
         //todo
         Command init = new InstantCommand().alongWith(intake.intakeDown());
@@ -100,8 +100,13 @@ public class CommandGroups {
                 .finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
     }
 
+    public Command getDumbShootGroup() {
+        return shoot.getShootCommand(3000).andThen(getInteyor())
+                .finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
+    }
+
     public Command getSpinUpAim() {
-        return shoot.getShootCommand(camera::getHubDistance, true)
+        return shoot.getShootCommand(swerve::getHubDistance, true)
                 .alongWith(
                         new PriorityAimCommand(swerve, camera)
                 ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
@@ -109,11 +114,6 @@ public class CommandGroups {
     public Command getInteyor(){
         return conveyor.getConveyorCommand().alongWith(index.getIndexCommand(), intake.getIntakeCommand());
     }
-
-
-
-
-
 }
 
 

@@ -52,13 +52,17 @@ public class RobotContainer {
 
     private void configureBindings() {
 
-        new Trigger(() -> xbox.getRightBumperButton()).onTrue(commandGroups.getSpinUpAim());
-        new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
+//        new Trigger(() -> xbox.getRightBumperButton()).onTrue(commandGroups.getSpinUpAim());
+//        new Trigger(() -> xbox.getRightBumperButton()).onTrue(commandGroups.getSpinUpAim());
+//        new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
         new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
-        new Trigger(() -> xbox.getLeftBumperButton()).toggleOnTrue(commandGroups.getSpinUpAim());
-        new Trigger(() -> xbox.getXButton()).onTrue(intake.intakeDown());
+//        new Trigger(() -> xbox.getLeftBumperButton()).toggleOnTrue(commandGroups.getSpinUpAim());
+//        new Trigger(() -> xbox.getXButton()).onTrue(intake.intakeDown());
         new Trigger(() -> xbox.getBButton()).whileTrue(conveyor.getConveyorCommand());
         new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
+
+        new Trigger(() -> xbox.getStartButton()).whileTrue(index.getIndexCommand());
+        new Trigger(() -> xbox.getRightTriggerAxis()> 0.5).whileTrue(commandGroups.getDumbShootGroup());
         //
         //new Trigger(()->xbox.getLeftTriggerAxis()>0.25).toggleOnTrue(end priority aim);
         //new Trigger(()->xbox.getYButton()).toggleOnTrue(climb);
@@ -68,6 +72,6 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return commandGroups.getAuto();
     }
 }

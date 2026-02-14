@@ -55,7 +55,7 @@ public class IntakeSubsystem extends LoggedSubsystem {
         Command c = new RunCommand(() -> {
             armMotor.set(cArmMotorSpeed);
             armMotorFollower.set(cArmMotorSpeed);
-        }, subsystem).withTimeout(1.5)
+        }, subsystem).withTimeout(2)
                 .finallyDo(() -> {
                     armMotor.getClosedLoopController().setSetpoint(0, SparkBase.ControlType.kPosition);
                     armMotor.getEncoder().setPosition(0);

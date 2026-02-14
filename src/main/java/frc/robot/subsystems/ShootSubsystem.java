@@ -43,7 +43,7 @@ public class ShootSubsystem extends LoggedSubsystem {
         motor1 = new SparkFlex(cMotorIDShooter1, SparkLowLevel.MotorType.kBrushless);
         motor2 = new SparkFlex(cMotorIDShooter2, SparkLowLevel.MotorType.kBrushless);
         SparkFlexConfig config = (SparkFlexConfig) new SparkFlexConfig().closedLoopRampRate(0.2).smartCurrentLimit(80);
-        motor1.configure(config.inverted(false), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor1.configure(config.inverted(true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         motor2.configure(config.follow(motor1, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
@@ -55,7 +55,7 @@ public class ShootSubsystem extends LoggedSubsystem {
         if (stop) {
             motor1.setVoltage(cS);
         } else motor1.setVoltage(output);
-        if(beamBreak.get()){
+        if(!beamBreak.get()){
             debouncer.restart();
         }
     }
@@ -80,7 +80,7 @@ public class ShootSubsystem extends LoggedSubsystem {
     }
 
     public Command getShootCommand(double speed) {
-        Command c = new InstantCommand(() -> {
+        Command c = new RunCommand(() -> {
             setGoalSpeed(speed);
             stop = false;
         }, this).until(this::isAtGoalSpeed);
