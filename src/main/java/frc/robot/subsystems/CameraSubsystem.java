@@ -30,7 +30,7 @@ public class CameraSubsystem extends SubsystemBase {
 
         this.odometry = odometry;
         cameras.add(
-                new Camera("Arducam_1", new Translation3d(32.25, 0.0025, 29), new Rotation3d(0, -Math.toRadians(9), 0))
+                new Camera("Arducam_1", new Translation3d(0.3225, 0.0025, 0.29), new Rotation3d(0, -Math.toRadians(9), 0))
         );
     }
 
@@ -51,6 +51,8 @@ public class CameraSubsystem extends SubsystemBase {
 
                 }
                 Pose3d robotPose = cameraPose.plus(camera.robotToCamera.inverse());
+                SmartDashboard.putNumberArray("5826/swerve/cameraPose", new double[]{cameraPose.getX(), cameraPose.getY(), cameraPose.getZ()});
+                SmartDashboard.putNumberArray("5826/swerve/robotPose", new double[]{robotPose.getX(), robotPose.getY(), robotPose.getZ()});
                 odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds());
             }
         }

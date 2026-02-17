@@ -7,6 +7,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -35,6 +36,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
     private TurnController turnController;
     private boolean overrideTurn = false;
 
+    private SwerveDrivePoseEstimator estimator;
 
     public SwerveSubsystem() {
 
@@ -51,16 +53,27 @@ public class SwerveSubsystem extends LoggedSubsystem {
         }
         setupPathPlanner();
         SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
-//        swerveDrive.setVisionMeasurementStdDevs();
 
+        new SwerveDrivePoseEstimator(swerveDrive.kinematics,
+                swerveDrive.getYaw(), swerveDrive.getModulePositions(), Pose2d.kZero,
+                VecBuilder.fill(0,0,0), VecBuilder.fill(0,0,0));
+
+        //TODO set turn controller coefficients
         turnController = new TurnController(0, 0, 0, 0, 0, 0, 0, () -> swerveDrive.getYaw().getRadians());
 
-        SmartDashboard.putData("5826/auto/field",swerveDrive.field);
+        SmartDashboard.putData("5826/swerve/field",swerveDrive.field);
+        SmartDashboard.putData("5826/swerve/turncontroller", turnController);
+    }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+        SmartDashboard.putNumber("5826/shoot/hubdistance", getHubDistance());
     }
 
     public void addVisionMeasurement(Pose2d robotPos, double timestamp ) {
         if(robotPos.getTranslation().getDistance(getPose().getTranslation())<1){
-            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01,0.01,1000));
+            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01,0.01,0.1));
 
         }else if(DriverStation.isDisabled()){
             swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01,0.01,0.1));
@@ -69,16 +82,15 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
     }
 
-    //TODO Set turnController to control something
     public void setTurnGoal(Rotation2d targetAngle) {
-
+        log("TurnOverride.init");
         overrideTurn = true;
         turnController.setGoal(targetAngle.getRadians(), swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
 
     }
 
     public void endTurn() {
-
+        log("TurnOverride.end");
         overrideTurn = false;
 
     }

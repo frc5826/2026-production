@@ -1,11 +1,9 @@
 package frc.robot.commands;
 
-import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.subsystems.LoggedSubsystem;
 
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class LoggedCommand extends Command {
     private Command command = new InstantCommand(()->{});
@@ -27,7 +25,7 @@ public class LoggedCommand extends Command {
     public void initialize() {
         for (Subsystem s:getRequirements()) {
             if (s instanceof LoggedSubsystem) {
-                ((LoggedSubsystem) s).Log(getName()+Integer.toHexString(System.identityHashCode(this))+".initialize");
+                ((LoggedSubsystem) s).log(getName()+Integer.toHexString(System.identityHashCode(this))+".initialize");
             }
         }
         if (command != this)
@@ -51,7 +49,7 @@ public class LoggedCommand extends Command {
         super.end(interrupted);
         for (Subsystem s:getRequirements()) {
             if (s instanceof LoggedSubsystem) {
-                ((LoggedSubsystem) s).Log(getName()+Integer.toHexString(System.identityHashCode(this))+".end");
+                ((LoggedSubsystem) s).log(getName()+Integer.toHexString(System.identityHashCode(this))+".end");
             }
         }
         if (command != this)

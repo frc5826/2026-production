@@ -54,7 +54,7 @@ public class RobotContainer {
 
 //        new Trigger(() -> xbox.getRightBumperButton()).onTrue(commandGroups.getSpinUpAim());
 //        new Trigger(() -> xbox.getRightBumperButton()).onTrue(commandGroups.getSpinUpAim());
-//        new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
+        new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
         new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
 //        new Trigger(() -> xbox.getLeftBumperButton()).toggleOnTrue(commandGroups.getSpinUpAim());
 //        new Trigger(() -> xbox.getXButton()).onTrue(intake.intakeDown());
@@ -62,7 +62,7 @@ public class RobotContainer {
         new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
 
         new Trigger(() -> xbox.getStartButton()).whileTrue(index.getIndexCommand());
-        new Trigger(() -> xbox.getRightTriggerAxis()> 0.5).whileTrue(commandGroups.getDumbShootGroup());
+        //new Trigger(() -> xbox.getRightTriggerAxis()> 0.5).whileTrue(commandGroups.getDumbShootGroup());
         //
         //new Trigger(()->xbox.getLeftTriggerAxis()>0.25).toggleOnTrue(end priority aim);
         //new Trigger(()->xbox.getYButton()).toggleOnTrue(climb);

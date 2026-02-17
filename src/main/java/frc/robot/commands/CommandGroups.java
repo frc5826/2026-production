@@ -5,6 +5,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.swerve.PriorityAimCommand;
@@ -27,10 +28,10 @@ public class CommandGroups {
 
 
     private String[] autoNames = new String[]{
-             "shootOnly",
-             "depotGrab+Shoot",
-             "humanPlayerGrab+Shoot",
-             "runOutToMiddle+Shoot"
+            "shootOnly",
+            "depotGrab+Shoot",
+            "humanPlayerGrab+Shoot",
+            "runOutToMiddle+Shoot"
     };
     private SendableChooser<String> autoChooser = new SendableChooser<>();
 
@@ -49,9 +50,9 @@ public class CommandGroups {
         for (String name : autoNames) {
             autoChooser.addOption(name, name);
         }
-        autoChooser.setDefaultOption("empty","empty");
+        autoChooser.setDefaultOption("empty", "empty");
 
-        SmartDashboard.putData("5826/Auto",autoChooser);
+        SmartDashboard.putData("5826/Auto", autoChooser);
     }
 
     public Command getAuto() {
@@ -85,19 +86,21 @@ public class CommandGroups {
         return new PrintCommand("Something Broke");
     }
 
-    public Command getPathCommand(String commandName){
-        try{
+    public Command getPathCommand(String commandName) {
+        try {
             return AutoBuilder.followPath(PathPlannerPath.fromPathFile(commandName));
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new InstantCommand();
     }
 
     public Command getShootGroup() {
-        return getSpinUpAim().andThen(new PriorityAimCommand(swerve, camera),
-                shoot.getShootCommand(swerve::getHubDistance, true), getInteyor())
-                .finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
+        return getSpinUpAim().andThen(Commands.parallel(
+                new PriorityAimCommand(swerve, camera),
+                shoot.getShootCommand(swerve::getHubDistance, true),
+                getInteyor()
+        )).finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
     }
 
     public Command getDumbShootGroup() {
@@ -109,9 +112,11 @@ public class CommandGroups {
         return shoot.getShootCommand(swerve::getHubDistance, true)
                 .alongWith(
                         new PriorityAimCommand(swerve, camera)
-                ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
+                ).until(()->shoot.isAtGoalSpeed());
+//                ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
     }
-    public Command getInteyor(){
+
+    public Command getInteyor() {
         return conveyor.getConveyorCommand().alongWith(index.getIndexCommand(), intake.getIntakeCommand());
     }
 }

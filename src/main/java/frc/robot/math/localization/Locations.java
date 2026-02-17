@@ -5,11 +5,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Locations {
     private static double length = 16.54;
     private static double width = 8.07;
-    private static boolean isBlue = false; //todo
+    private static boolean isBlue = false;
 
 
     private Locations () {
@@ -94,6 +95,10 @@ public class Locations {
         double y2 = -pose.getY() + width;
 
         return new Pose2d(x2,y2,pose.getRotation().plus(Rotation2d.k180deg));
+    }
+
+    public static void setAlliance() {
+        isBlue = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue;
     }
 
 }
