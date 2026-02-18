@@ -43,13 +43,16 @@ public class CameraSubsystem extends SubsystemBase {
                 if (result.getMultiTagResult().isPresent()) {
                     cameraPose = Pose3d.kZero.plus(result.getMultiTagResult().get().estimatedPose.best);
                 } else {
-                    PhotonTrackedTarget target = result.getBestTarget();
-                    if (target.getPoseAmbiguity() > 0.2) {
-                        return;
-                    }
-                    cameraPose = layout.getTagPose(target.fiducialId).get().plus(target.bestCameraToTarget);
-
+                    return;
                 }
+//                else {
+//                    PhotonTrackedTarget target = result.getBestTarget();
+//                    if (target.getPoseAmbiguity() > 0.2) {
+//                        return;
+//                    }
+//                    cameraPose = layout.getTagPose(target.fiducialId).get().plus(target.bestCameraToTarget);
+//
+//                }
                 Pose3d robotPose = cameraPose.plus(camera.robotToCamera.inverse());
                 SmartDashboard.putNumberArray("5826/swerve/cameraPose", new double[]{cameraPose.getX(), cameraPose.getY(), cameraPose.getZ()});
                 SmartDashboard.putNumberArray("5826/swerve/robotPose", new double[]{robotPose.getX(), robotPose.getY(), robotPose.getZ()});

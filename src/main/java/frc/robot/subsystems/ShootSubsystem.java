@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,6 +40,7 @@ public class ShootSubsystem extends LoggedSubsystem {
         SmartDashboard.putData("5826/shoot/pid", pid);
         SmartDashboard.putData("5826/shoot/controller", controller);
         SmartDashboard.putData("5826/shoot/beamBreak", beamBreak);
+        Preferences.initDouble("distanceOffset",0);
 
         motor1 = new SparkFlex(cMotorIDShooter1, SparkLowLevel.MotorType.kBrushless);
         motor2 = new SparkFlex(cMotorIDShooter2, SparkLowLevel.MotorType.kBrushless);
@@ -53,11 +55,12 @@ public class ShootSubsystem extends LoggedSubsystem {
         double output = controller.calculate();
         SmartDashboard.putNumber("5826/shoot/speed🏃‍♂️", getCurrentVelocity());
         if (stop) {
-            motor1.setVoltage(cS);
+            motor1.setVoltage(cS+cV*500);
         } else motor1.setVoltage(output);
         if(!beamBreak.get()){
             debouncer.restart();
         }
+
     }
 
     public void setGoalSpeed(double goalSpeed) {
@@ -96,7 +99,7 @@ public class ShootSubsystem extends LoggedSubsystem {
     }
 
     private double getRPMFromDistance(double distance) {
-        double x = distance + 0.60;
+        double x = distance + 0.60 + Preferences.getDouble("distanceOffset",0);
         return -102.62602 * Math.pow(x, 4) + 1659.2906 * Math.pow(x, 3) - 9494.24078 * Math.pow(x, 2) + 23465.129 * x - 18598.1388;//todo
     }
 
@@ -119,4 +122,3 @@ public class ShootSubsystem extends LoggedSubsystem {
     }
 
 }
-

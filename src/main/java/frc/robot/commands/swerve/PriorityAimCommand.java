@@ -2,6 +2,7 @@ package frc.robot.commands.swerve;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.LoggedCommand;
 import frc.robot.math.PID;
 import frc.robot.math.localization.Locations;
@@ -24,25 +25,29 @@ public class PriorityAimCommand extends LoggedCommand {
     @Override
     public void initialize() {
         super.initialize();
+        Pose2d robotPose = swerveSubsystem.getPose();
+        Rotation2d rotation2d = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
+        SmartDashboard.putNumber("angle",rotation2d.getDegrees());
+        swerveSubsystem.setTurnGoal(rotation2d);
+        if (Locations.getAllianceZonePose().contains(robotPose.getTranslation())) {
+
+        }
+//        else if (Locations.getLeftSideMidPose().contains(robotPose.getTranslation())) {
+//            Rotation2d rotation2d = Locations.getLeftSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
+//            swerveSubsystem.setTurnGoal(rotation2d);
+//        }
+//        else if (Locations.getRightSideMidPose().contains(robotPose.getTranslation())) {
+//            Rotation2d rotation2d = Locations.getRightSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
+//            swerveSubsystem.setTurnGoal(rotation2d);
+//        }
+
     }
 
     @Override
     public void execute() {
         super.execute();
 
-        Pose2d robotPose = swerveSubsystem.getPose();
-        if (Locations.getAllianceZonePose().contains(robotPose.getTranslation())) {
-            Rotation2d rotation2d = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
-            swerveSubsystem.setTurnGoal(rotation2d);
-        }
-        else if (Locations.getLeftSideMidPose().contains(robotPose.getTranslation())) {
-            Rotation2d rotation2d = Locations.getLeftSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
-            swerveSubsystem.setTurnGoal(rotation2d);
-        }
-        else if (Locations.getRightSideMidPose().contains(robotPose.getTranslation())) {
-            Rotation2d rotation2d = Locations.getRightSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
-            swerveSubsystem.setTurnGoal(rotation2d);
-        }
+
 
     }
 

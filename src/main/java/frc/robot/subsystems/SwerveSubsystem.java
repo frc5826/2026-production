@@ -26,6 +26,7 @@ import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -56,27 +57,32 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
         new SwerveDrivePoseEstimator(swerveDrive.kinematics,
                 swerveDrive.getYaw(), swerveDrive.getModulePositions(), Pose2d.kZero,
-                VecBuilder.fill(0,0,0), VecBuilder.fill(0,0,0));
+                VecBuilder.fill(0, 0, 0), VecBuilder.fill(0, 0, 0));
 
         //TODO set turn controller coefficients
-        turnController = new TurnController(0, 0, 0, 0, 0, 0, 0, () -> swerveDrive.getYaw().getRadians());
+        turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 0.7, 0, 0, () -> getPose().getRotation().getRadians());
 
-        SmartDashboard.putData("5826/swerve/field",swerveDrive.field);
+        SmartDashboard.putData("5826/swerve/field", swerveDrive.field);
         SmartDashboard.putData("5826/swerve/turncontroller", turnController);
+        SmartDashboard.putData("turnTo0", new InstantCommand(() -> setTurnGoal(Rotation2d.fromDegrees(0))));
+        SmartDashboard.putData("turnTo90", new InstantCommand(() -> setTurnGoal(Rotation2d.fromDegrees(90))));
+        SmartDashboard.putData("turnTo180", new InstantCommand(() -> setTurnGoal(Rotation2d.fromDegrees(180))));
     }
 
     @Override
     public void periodic() {
         super.periodic();
         SmartDashboard.putNumber("5826/shoot/hubdistance", getHubDistance());
+        SmartDashboard.putNumber("5826/swerve/turnSpeed", swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
+
     }
 
-    public void addVisionMeasurement(Pose2d robotPos, double timestamp ) {
-        if(robotPos.getTranslation().getDistance(getPose().getTranslation())<1){
-            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01,0.01,0.1));
+    public void addVisionMeasurement(Pose2d robotPos, double timestamp) {
+        if (robotPos.getTranslation().getDistance(getPose().getTranslation()) < 1) {
+            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01, 0.01, 0.1));
 
-        }else if(DriverStation.isDisabled()){
-            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01,0.01,0.1));
+        } else if (DriverStation.isDisabled()) {
+            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01, 0.01, 0.1));
 
         }
 
@@ -85,7 +91,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
     public void setTurnGoal(Rotation2d targetAngle) {
         log("TurnOverride.init");
         overrideTurn = true;
-        turnController.setGoal(targetAngle.getRadians(), swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
+        turnController.setGoal(targetAngle.getRadians(), -swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
 
     }
 
@@ -140,10 +146,10 @@ public class SwerveSubsystem extends LoggedSubsystem {
     public void drive(ChassisSpeeds speeds) {
 
         if (overrideTurn) {
-            speeds.omegaRadiansPerSecond = turnController.calculate(0.02);
+            speeds.omegaRadiansPerSecond = -turnController.calculate(0.02);
         }
 
-        swerveDrive.driveFieldOriented(speeds);
+        swerveDrive.drive(speeds);
     }
 
     public double getMaxSpeed() {

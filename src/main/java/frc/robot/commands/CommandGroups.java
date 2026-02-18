@@ -112,8 +112,8 @@ public class CommandGroups {
         return shoot.getShootCommand(swerve::getHubDistance, true)
                 .alongWith(
                         new PriorityAimCommand(swerve, camera)
-                ).until(()->shoot.isAtGoalSpeed());
-//                ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
+//                ).until(()->shoot.isAtGoalSpeed());
+                ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
     }
 
     public Command getInteyor() {
