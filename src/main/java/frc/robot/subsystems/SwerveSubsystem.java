@@ -10,10 +10,12 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -74,6 +76,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
         super.periodic();
         SmartDashboard.putNumber("5826/shoot/hubdistance", getHubDistance());
         SmartDashboard.putNumber("5826/swerve/turnSpeed", swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
+        SmartDashboard.putBoolean("5826/swerve/isAtTurnTarget", isAtTurnTarget());
 
     }
 
@@ -83,6 +86,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
         } else if (DriverStation.isDisabled()) {
             swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01, 0.01, 0.1));
+            swerveDrive.setGyro(new Rotation3d(robotPos.getRotation()));
 
         }
 
@@ -149,7 +153,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
             speeds.omegaRadiansPerSecond = -turnController.calculate(0.02);
         }
 
-        swerveDrive.drive(speeds);
+        swerveDrive.drive(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, swerveDrive.getYaw()));
     }
 
     public double getMaxSpeed() {

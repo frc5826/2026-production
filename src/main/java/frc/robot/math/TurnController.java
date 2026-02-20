@@ -3,6 +3,7 @@ package frc.robot.math;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.function.DoubleSupplier;
 
@@ -26,6 +27,7 @@ public class TurnController implements NTSendable {
         profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
         setpoint = new TrapezoidProfile.State();
         goal = new TrapezoidProfile.State();
+
     }
 
     public void setGoal(double angleGoal, double startVelocity) {
@@ -53,9 +55,9 @@ public class TurnController implements NTSendable {
         }
         return difference;
     }
-
+    //TODO Find Real Degree
     public boolean isFinished() {
-        return Math.abs(angleDifference(currentAngle.getAsDouble(), setpoint.position)) < Math.toRadians(5);
+        return Math.abs(angleDifference(currentAngle.getAsDouble(), setpoint.position)) < Math.toRadians(15);
     }
 
     @Override

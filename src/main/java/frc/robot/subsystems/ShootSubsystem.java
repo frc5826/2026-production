@@ -54,6 +54,7 @@ public class ShootSubsystem extends LoggedSubsystem {
     public void periodic() {
         double output = controller.calculate();
         SmartDashboard.putNumber("5826/shoot/speed🏃‍♂️", getCurrentVelocity());
+        SmartDashboard.putBoolean("5826/shoot/isAtGoalSpeed", isAtGoalSpeed());
         if (stop) {
             motor1.setVoltage(cS+cV*500);
         } else motor1.setVoltage(output);

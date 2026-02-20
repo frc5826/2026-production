@@ -53,37 +53,43 @@ public class CommandGroups {
         autoChooser.setDefaultOption("empty", "empty");
 
         SmartDashboard.putData("5826/Auto", autoChooser);
+
+
     }
 
     public Command getAuto() {
         //Things that happen every time in auto go in init.
         //todo
         Command init = new InstantCommand().alongWith(intake.intakeDown());
-        if (autoChooser.getSelected().equals("empty")) {
-            return init;
-        } else if (autoChooser.getSelected().equals("shootOnly")) {
-            return init.alongWith(getShootGroup());
 
-        } else if (autoChooser.getSelected().equals("depotGrab+Shoot")) {
-            return init.alongWith(intake.getIntakeCommand(), getPathCommand("toDepotCommand"))
-                    .andThen(getPathCommand("awayDepotCommand"))
-                    .andThen(getShootGroup());
 
-        } else if (autoChooser.getSelected().equals("humanPlayerGrab+Shoot")) {
-            return AutoBuilder.buildAuto("toHumanPlayerPath").until(sensor.getBeamBreak())
-                    .andThen(AutoBuilder.buildAuto("awayHumanPlayerPath"))
-                    .andThen(getShootGroup());
 
-        } else if (autoChooser.getSelected().equals("runOutToMiddle+Shoot")) {
-            if (Locations.getLeftAllianceZonePose().contains(swerve.getPose().getTranslation()))
-                return getInteyor().alongWith(AutoBuilder.buildAuto("toMiddleFromLeftPath").andThen(getShootGroup()));
-            else if (Locations.getRightAllianceZonePose().contains(swerve.getPose().getTranslation())) {
-                return getInteyor().alongWith(AutoBuilder.buildAuto("toMiddleFromRightPath").andThen(getShootGroup()));
-            }
 
-        }
+        return init;
+//        if (autoChooser.getSelected().equals("empty")) {
+//            return init;
+//        } else if (autoChooser.getSelected().equals("shootOnly")) {
+//            return init.alongWith(getShootGroup());
+//
+//        } else if (autoChooser.getSelected().equals("depotGrab+Shoot")) {
+//            return init.alongWith(intake.getIntakeCommand(), getPathCommand("toDepotCommand"))
+//                    .andThen(getPathCommand("awayDepotCommand"))
+//                    .andThen(getShootGroup());
+//
+//        } else if (autoChooser.getSelected().equals("humanPlayerGrab+Shoot")) {
+//            return AutoBuilder.buildAuto("toHumanPlayerPath").until(sensor.getBeamBreak())
+//                    .andThen(AutoBuilder.buildAuto("awayHumanPlayerPath"))
+//                    .andThen(getShootGroup());
+//
+//        } else if (autoChooser.getSelected().equals("runOutToMiddle+Shoot")) {
+//            if (Locations.getLeftAllianceZonePose().contains(swerve.getPose().getTranslation()))
+//                return getInteyor().alongWith(AutoBuilder.buildAuto("toMiddleFromLeftPath").andThen(getShootGroup()));
+//            else if (Locations.getRightAllianceZonePose().contains(swerve.getPose().getTranslation())) {
+//                return getInteyor().alongWith(AutoBuilder.buildAuto("toMiddleFromRightPath").andThen(getShootGroup()));
+//            }
+//
+//        }
 
-        return new PrintCommand("Something Broke");
     }
 
     public Command getPathCommand(String commandName) {
