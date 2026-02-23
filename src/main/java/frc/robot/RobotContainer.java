@@ -9,7 +9,9 @@ import com.ctre.phoenix6.SignalLogger;
 import com.revrobotics.util.StatusLogger;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -34,6 +36,7 @@ public class RobotContainer {
     public IndexSubsystem index = new IndexSubsystem();
     public SensorSubsystem sensor = new SensorSubsystem();
     public PriorityAimCommand priority = new PriorityAimCommand(swerve, cameras);
+    public PowerDistribution pdp = new PowerDistribution(50, PowerDistribution.ModuleType.kRev);
 
     public XboxController xbox = new XboxController(1);
 
@@ -44,10 +47,14 @@ public class RobotContainer {
             DataLogManager.start("/U/logs");
             DriverStation.startDataLog(DataLogManager.getLog());
         }
+        SignalLogger.enableAutoLogging(false);
+        StatusLogger.disableAutoLogging();
 
         configureBindings();
 
         swerve.setDefaultCommand(new TeleopDriveCommand(swerve,xbox));
+
+        SmartDashboard.putData("5826/powerdist", pdp);
 
     }
 
