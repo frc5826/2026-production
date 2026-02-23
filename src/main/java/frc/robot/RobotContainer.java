@@ -8,6 +8,7 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import com.revrobotics.util.StatusLogger;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -41,9 +42,8 @@ public class RobotContainer {
     public RobotContainer() {
         if (new File("/U/logs").isDirectory()) {
             DataLogManager.start("/U/logs");
+            DriverStation.startDataLog(DataLogManager.getLog());
         }
-        SignalLogger.enableAutoLogging(false);
-        StatusLogger.disableAutoLogging();
 
         configureBindings();
 
@@ -59,6 +59,7 @@ public class RobotContainer {
         new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
         new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
         new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(priority);
+        new Trigger(() -> xbox.getRightBumperButton()).whileTrue(commandGroups.getDumbShootGroup());
 //        new Trigger(() -> xbox.getLeftBumperButton()).toggleOnTrue(commandGroups.getSpinUpAim());
 //        new Trigger(() -> xbox.getXButton()).onTrue(intake.intakeDown());
         new Trigger(() -> xbox.getBButton()).whileTrue(conveyor.getConveyorCommand());

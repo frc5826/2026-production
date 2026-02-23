@@ -13,54 +13,65 @@ public class Locations {
     private static boolean isBlue = false;
 
 
-    private Locations () {
+    private Locations() {}
 
-    }
-    public static Pose2d getDepotPose () {
+    public static Pose2d getDepotPose() {
         //0.758, 5.948
         Pose2d pose = new Pose2d(0.758, 5.948, Rotation2d.kZero);
         return flip(pose);
     }
-    public static Pose2d getHubPose () {
+
+    public static Pose2d getAutoShootPose() {
+        Pose2d pose = new Pose2d(2.316, 5.282, Rotation2d.kZero);
+        return flip(pose);
+    }
+
+    public static Pose2d getHubPose() {
         //4.625x, 4.035y
-        Pose2d pose = new Pose2d(4.625,4.035, Rotation2d.kZero );
+        Pose2d pose = new Pose2d(4.625, 4.035, Rotation2d.kZero);
         return flip(pose);
     }
-    public static Pose2d getLeftSideTarget(){
 
-        Pose2d pose = new Pose2d(4.625,6.075, Rotation2d.kZero );
-        return flip(pose);
+    public static Pose2d getLeftSideTarget() {
 
-    }
-    public static Pose2d getRightSideTarget(){
-
-        Pose2d pose = new Pose2d(4.625,2.025, Rotation2d.kZero );
+        Pose2d pose = new Pose2d(4.625, 6.075, Rotation2d.kZero);
         return flip(pose);
 
     }
-    public static Rectangle2d getLeftAllianceZonePose(){
+
+    public static Pose2d getRightSideTarget() {
+
+        Pose2d pose = new Pose2d(4.625, 2.025, Rotation2d.kZero);
+        return flip(pose);
+
+    }
+
+    public static Rectangle2d getLeftAllianceZonePose() {
 
         Translation2d cornerA = new Translation2d(0, 4);
         Translation2d cornerB = new Translation2d(3.975, 8);
 
         return new Rectangle2d(flip(cornerA), flip(cornerB));
     }
-    public static Rectangle2d getRightAllianceZonePose(){
+
+    public static Rectangle2d getRightAllianceZonePose() {
 
         Translation2d cornerA = new Translation2d(0, 0);
         Translation2d cornerB = new Translation2d(3.975, 4);
 
         return new Rectangle2d(flip(cornerA), flip(cornerB));
     }
-    public static Rectangle2d getAllianceZonePose(){
+
+    public static Rectangle2d getAllianceZonePose() {
         //Center: , X: 4.616, Y: 8.1
         Translation2d cornerA = new Translation2d(0, 0);
         Translation2d cornerB = new Translation2d(4.616, 8.1);
 
-        return new Rectangle2d(flip(cornerA) , flip(cornerB));
+        return new Rectangle2d(flip(cornerA), flip(cornerB));
 
     }
-    public static Rectangle2d getLeftSideMidPose(){
+
+    public static Rectangle2d getLeftSideMidPose() {
 
         Translation2d cornerA = new Translation2d(4.616, 4.050);
         Translation2d cornerB = new Translation2d(11.915, 8.1);
@@ -68,7 +79,8 @@ public class Locations {
         return new Rectangle2d(flip(cornerA), flip(cornerB));
 
     }
-    public static Rectangle2d getRightSideMidPose(){
+
+    public static Rectangle2d getRightSideMidPose() {
 
         Translation2d cornerA = new Translation2d(4.616, 0);
         Translation2d cornerB = new Translation2d(11.915, 4.05);
@@ -77,28 +89,42 @@ public class Locations {
         return new Rectangle2d(flip(cornerA), flip(cornerB));
 
     }
-    private static Translation2d flip (Translation2d pose) {
-        if (isBlue) {
-            return pose;
-        }
-        double x2 = -pose.getX() + length;
-        double y2 = -pose.getY() + width;
 
-        return new Translation2d(x2,y2);
+    public static Pose2d move(Pose2d pose, double x, double y){
+        pose = flip(pose);
+        pose = new Pose2d(pose.getX()+x, pose.getY()+y, pose.getRotation());
+        return flip(pose);
     }
 
-    private static Pose2d flip (Pose2d pose) {
+    public static Rotation2d angleTo(Pose2d a, Pose2d b){
+        return a.getTranslation().minus(b.getTranslation()).getAngle();
+    }
+
+    private static Translation2d flip(Translation2d pose) {
         if (isBlue) {
             return pose;
         }
         double x2 = -pose.getX() + length;
         double y2 = -pose.getY() + width;
 
-        return new Pose2d(x2,y2,pose.getRotation().plus(Rotation2d.k180deg));
+        return new Translation2d(x2, y2);
+    }
+
+    private static Pose2d flip(Pose2d pose) {
+        if (isBlue) {
+            return pose;
+        }
+        double x2 = -pose.getX() + length;
+        double y2 = -pose.getY() + width;
+
+        return new Pose2d(x2, y2, pose.getRotation().plus(Rotation2d.k180deg));
     }
 
     public static void setAlliance() {
         isBlue = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue;
     }
 
+    public static boolean getIsBlue() {
+        return isBlue;
+    }
 }

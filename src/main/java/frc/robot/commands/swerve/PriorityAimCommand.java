@@ -12,13 +12,11 @@ import org.photonvision.PhotonUtils;
 
 public class PriorityAimCommand extends LoggedCommand {
 
-    private CameraSubsystem cameraSubsystem;
     private SwerveSubsystem swerveSubsystem;
 
     public PriorityAimCommand(SwerveSubsystem swerveSubsystem, CameraSubsystem cameraSubsystem){
 
         this.swerveSubsystem = swerveSubsystem;
-        this.cameraSubsystem = cameraSubsystem;
 
     }
 
@@ -26,23 +24,21 @@ public class PriorityAimCommand extends LoggedCommand {
     public void initialize() {
         super.initialize();
         Pose2d robotPose = swerveSubsystem.getPose();
-        Rotation2d rotation2d = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
+        Rotation2d rotation2d = Rotation2d.kZero;
+
+        if (Locations.getAllianceZonePose().contains(robotPose.getTranslation())) {
+            rotation2d = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
+            swerveSubsystem.setTurnGoal(rotation2d);
+        }
+        else if (Locations.getLeftSideMidPose().contains(robotPose.getTranslation())) {
+            rotation2d = Locations.getLeftSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
+            swerveSubsystem.setTurnGoal(rotation2d);
+        }
+        else if (Locations.getRightSideMidPose().contains(robotPose.getTranslation())) {
+            rotation2d = Locations.getRightSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
+            swerveSubsystem.setTurnGoal(rotation2d);
+        }
         SmartDashboard.putNumber("angle",rotation2d.getDegrees());
-        swerveSubsystem.setTurnGoal(rotation2d);
-
-
-//        if (Locations.getAllianceZonePose().contains(robotPose.getTranslation())) {
-//
-//        }
-//        else if (Locations.getLeftSideMidPose().contains(robotPose.getTranslation())) {
-//            Rotation2d rotation2d = Locations.getLeftSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
-//            swerveSubsystem.setTurnGoal(rotation2d);
-//        }
-//        else if (Locations.getRightSideMidPose().contains(robotPose.getTranslation())) {
-//            Rotation2d rotation2d = Locations.getRightSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
-//            swerveSubsystem.setTurnGoal(rotation2d);
-//        }
-
     }
 
     @Override
@@ -50,6 +46,25 @@ public class PriorityAimCommand extends LoggedCommand {
         super.execute();
         SmartDashboard.putBoolean("5826/priorityaim/isFinished", isFinished());
 
+        //TODO test if we can do this in execute
+//        if(swerveSubsystem.isAtTurnTarget()) {
+//            Pose2d robotPose = swerveSubsystem.getPose();
+//            Rotation2d rotation2d = Rotation2d.kZero;
+//
+//            if (Locations.getAllianceZonePose().contains(robotPose.getTranslation())) {
+//                rotation2d = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
+//                swerveSubsystem.setTurnGoal(rotation2d);
+//            }
+//            else if (Locations.getLeftSideMidPose().contains(robotPose.getTranslation())) {
+//                rotation2d = Locations.getLeftSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
+//                swerveSubsystem.setTurnGoal(rotation2d);
+//            }
+//            else if (Locations.getRightSideMidPose().contains(robotPose.getTranslation())) {
+//                rotation2d = Locations.getRightSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
+//                swerveSubsystem.setTurnGoal(rotation2d);
+//            }
+//            SmartDashboard.putNumber("angle",rotation2d.getDegrees());
+//        }
 
     }
 

@@ -3,7 +3,6 @@ package frc.robot.math;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.function.DoubleSupplier;
 
@@ -15,10 +14,10 @@ public class TurnController implements NTSendable {
     private PID pid;
     private double output;
     private DoubleSupplier currentAngle;
-    private double angle;
+    private double angleGoal;
 
     public TurnController(double v, double s, double maxVelocity, double maxAcceleration, double p, double i, double d, DoubleSupplier currentAngle) {
-        this.pid = new PID(p, i, d, 1, -1, 0.01, () -> angleDifference(currentAngle.getAsDouble(), angle)-setpoint.position);
+        this.pid = new PID(p, i, d, 1, -1, 0.01, () -> angleDifference(currentAngle.getAsDouble(), angleGoal)-setpoint.position);
         this.v = v;
         this.s = s;
         this.currentAngle = currentAngle;
@@ -32,7 +31,7 @@ public class TurnController implements NTSendable {
 
     public void setGoal(double angleGoal, double startVelocity) {
         double startPoint = angleDifference(currentAngle.getAsDouble(), angleGoal);
-        angle = angleGoal;
+        this.angleGoal = angleGoal;
         goal = new TrapezoidProfile.State(0, 0);
         setpoint = new TrapezoidProfile.State(startPoint, startVelocity);
     }
@@ -57,7 +56,7 @@ public class TurnController implements NTSendable {
     }
     //TODO Find Real Degree
     public boolean isFinished() {
-        return Math.abs(angleDifference(currentAngle.getAsDouble(), setpoint.position)) < Math.toRadians(15);
+        return Math.abs(angleDifference(currentAngle.getAsDouble(), angleGoal)) < Math.toRadians(5);
     }
 
     @Override

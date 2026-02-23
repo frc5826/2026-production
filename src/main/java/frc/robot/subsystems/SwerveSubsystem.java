@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.studica.frc.AHRS;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -39,7 +40,8 @@ public class SwerveSubsystem extends LoggedSubsystem {
     private TurnController turnController;
     private boolean overrideTurn = false;
 
-    private SwerveDrivePoseEstimator estimator;
+    private AHRS gyro;
+    private Rotation2d gyroOffset = Rotation2d.kZero;
 
     public SwerveSubsystem() {
 
@@ -57,12 +59,8 @@ public class SwerveSubsystem extends LoggedSubsystem {
         setupPathPlanner();
         SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
 
-        new SwerveDrivePoseEstimator(swerveDrive.kinematics,
-                swerveDrive.getYaw(), swerveDrive.getModulePositions(), Pose2d.kZero,
-                VecBuilder.fill(0, 0, 0), VecBuilder.fill(0, 0, 0));
-
-        //TODO set turn controller coefficients
-        turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 0.7, 0, 0, () -> getPose().getRotation().getRadians());
+        gyro = (AHRS) swerveDrive.getGyro().getIMU();
+        turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 1, 0, 0, () -> getPose().getRotation().getRadians());
 
         SmartDashboard.putData("5826/swerve/field", swerveDrive.field);
         SmartDashboard.putData("5826/swerve/turncontroller", turnController);
@@ -74,10 +72,13 @@ public class SwerveSubsystem extends LoggedSubsystem {
     @Override
     public void periodic() {
         super.periodic();
+        if(DriverStation.isDisabled()){
+            gyroOffset = getPose().getRotation().minus(Rotation2d.fromDegrees(-gyro.getAngle()));
+        }
         SmartDashboard.putNumber("5826/shoot/hubdistance", getHubDistance());
+        SmartDashboard.putNumber("5826/swerve/gyroAngle", Rotation2d.fromDegrees(-gyro.getAngle()).plus(gyroOffset).getDegrees());
         SmartDashboard.putNumber("5826/swerve/turnSpeed", swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
         SmartDashboard.putBoolean("5826/swerve/isAtTurnTarget", isAtTurnTarget());
-
     }
 
     public void addVisionMeasurement(Pose2d robotPos, double timestamp) {
@@ -86,7 +87,6 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
         } else if (DriverStation.isDisabled()) {
             swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01, 0.01, 0.1));
-            swerveDrive.setGyro(new Rotation3d(robotPos.getRotation()));
 
         }
 
@@ -139,8 +139,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
     }
 
     public void teleopDrive(double xSpeed, double ySpeed, double turnSpeed) {
-        DriverStation.Alliance alliance = DriverStation.getAlliance().get();
-        if (alliance == DriverStation.Alliance.Red) {
+        if (!Locations.getIsBlue()) {
             xSpeed = -xSpeed;
             ySpeed = -ySpeed;
         }
@@ -153,7 +152,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
             speeds.omegaRadiansPerSecond = -turnController.calculate(0.02);
         }
 
-        swerveDrive.drive(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, swerveDrive.getYaw()));
+        swerveDrive.drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, Rotation2d.fromDegrees(-gyro.getAngle()).plus(gyroOffset)));
     }
 
     public double getMaxSpeed() {
