@@ -209,4 +209,7 @@ public class CommandGroups {
         };
         return LoggedCommand.logCommand(c, "move ("+x+","+y+")");
     }
+    public Command getDejammerCommand(){
+       return intake.getReverseIntakeCommand().alongWith(conveyor.getReverseConveyorCommand()).withTimeout(1);
+    }
 }

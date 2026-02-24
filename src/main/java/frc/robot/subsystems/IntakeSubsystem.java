@@ -47,6 +47,10 @@ public class IntakeSubsystem extends LoggedSubsystem {
         Command c = new RunCommand(() -> setSpeed(cSpeed), this).finallyDo(() -> setSpeed(0));
         return LoggedCommand.logCommand(c, "Intake Command");
     }
+    public Command getReverseIntakeCommand() {
+        Command c = new RunCommand(() -> setSpeed(-cSpeed), this).finallyDo(() -> setSpeed(0));
+        return LoggedCommand.logCommand(c, "Reverse Intake Command");
+    }
 
     public void setSpeed(double speed) {
         intakeMotor.set(speed);

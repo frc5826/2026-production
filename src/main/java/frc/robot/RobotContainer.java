@@ -68,7 +68,7 @@ public class RobotContainer {
         new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(priority);
         new Trigger(() -> xbox.getRightBumperButton()).whileTrue(commandGroups.getDumbShootGroup());
 //        new Trigger(() -> xbox.getLeftBumperButton()).toggleOnTrue(commandGroups.getSpinUpAim());
-//        new Trigger(() -> xbox.getXButton()).onTrue(intake.intakeDown());
+        new Trigger(() -> xbox.getXButton()).onTrue(commandGroups.getDejammerCommand());
         new Trigger(() -> xbox.getBButton()).whileTrue(conveyor.getConveyorCommand());
         new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
 
