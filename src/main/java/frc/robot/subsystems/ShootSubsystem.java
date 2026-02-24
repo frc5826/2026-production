@@ -44,7 +44,7 @@ public class ShootSubsystem extends LoggedSubsystem {
 
         motor1 = new SparkFlex(cMotorIDShooter1, SparkLowLevel.MotorType.kBrushless);
         motor2 = new SparkFlex(cMotorIDShooter2, SparkLowLevel.MotorType.kBrushless);
-        SparkFlexConfig config = (SparkFlexConfig) new SparkFlexConfig().closedLoopRampRate(0.2).smartCurrentLimit(80);
+        SparkFlexConfig config = (SparkFlexConfig) new SparkFlexConfig().closedLoopRampRate(0.2).smartCurrentLimit(40);
         motor1.configure(config.inverted(true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         motor2.configure(config.follow(motor1, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -56,7 +56,7 @@ public class ShootSubsystem extends LoggedSubsystem {
         SmartDashboard.putNumber("5826/shoot/speed🏃‍♂️", getCurrentVelocity());
         SmartDashboard.putBoolean("5826/shoot/isAtGoalSpeed", isAtGoalSpeed());
         if (stop) {
-            motor1.setVoltage(cS+cV*500);
+            motor1.setVoltage(cS+cV*2000);
         } else motor1.setVoltage(output);
         if(!beamBreak.get()){
             debouncer.restart();

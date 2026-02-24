@@ -64,9 +64,6 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
         SmartDashboard.putData("5826/swerve/field", swerveDrive.field);
         SmartDashboard.putData("5826/swerve/turncontroller", turnController);
-        SmartDashboard.putData("turnTo0", new InstantCommand(() -> setTurnGoal(Rotation2d.fromDegrees(0))));
-        SmartDashboard.putData("turnTo90", new InstantCommand(() -> setTurnGoal(Rotation2d.fromDegrees(90))));
-        SmartDashboard.putData("turnTo180", new InstantCommand(() -> setTurnGoal(Rotation2d.fromDegrees(180))));
     }
 
     @Override

@@ -29,7 +29,7 @@ public class Constants {
         public static final double cArmMotorSpeed = 0.2;
         public static final int cArmMotor = 7;
         public static final int cArmMotorFollower = 6;
-        public static final double cSpeed = 0.63;
+        public static final double cSpeed = 1;
     }
     public static class Index {
         public static final int cInnerIndex = 15;
