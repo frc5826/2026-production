@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -78,12 +80,12 @@ public class SwerveSubsystem extends LoggedSubsystem {
         SmartDashboard.putBoolean("5826/swerve/isAtTurnTarget", isAtTurnTarget());
     }
 
-    public void addVisionMeasurement(Pose2d robotPos, double timestamp) {
+    public void addVisionMeasurement(Pose2d robotPos, double timestamp, Matrix<N3, N1> stdDevs) {
         if (robotPos.getTranslation().getDistance(getPose().getTranslation()) < 1) {
-            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01, 0.01, 0.1));
+            swerveDrive.addVisionMeasurement(robotPos, timestamp, stdDevs);
 
         } else if (DriverStation.isDisabled()) {
-            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.01, 0.01, 0.1));
+            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.05, 0.05, 0.5));
 
         }
 

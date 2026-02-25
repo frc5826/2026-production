@@ -2,7 +2,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,9 +28,9 @@ import java.util.function.Function;
 public class CameraSubsystem extends SubsystemBase {
     private List<Camera> cameras = new ArrayList<>(5);
     private AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
-    private BiConsumer<Pose2d, Double> odometry;
+    private TriConsumer<Pose2d, Double, Matrix<N3, N1>> odometry;
 
-    public CameraSubsystem(BiConsumer<Pose2d, Double> odometry) {
+    public CameraSubsystem(TriConsumer<Pose2d, Double, Matrix<N3, N1>> odometry) {
 
         this.odometry = odometry;
         cameras.add(
@@ -42,6 +46,9 @@ public class CameraSubsystem extends SubsystemBase {
             if (result.hasTargets()) {
                 if (result.getMultiTagResult().isPresent()) {
                     cameraPose = Pose3d.kZero.plus(result.getMultiTagResult().get().estimatedPose.best);
+                    Pose3d robotPose = cameraPose.plus(camera.robotToCamera.inverse());
+                    //TODO look at which ids were used and find avg distance to set stdDev
+                    odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds(), VecBuilder.fill(0.1,0.1,1));
                 } else {
                     return;
                 }
@@ -53,10 +60,6 @@ public class CameraSubsystem extends SubsystemBase {
 //                    cameraPose = layout.getTagPose(target.fiducialId).get().plus(target.bestCameraToTarget);
 //
 //                }
-                Pose3d robotPose = cameraPose.plus(camera.robotToCamera.inverse());
-                SmartDashboard.putNumberArray("5826/swerve/cameraPose", new double[]{cameraPose.getX(), cameraPose.getY(), cameraPose.getZ()});
-                SmartDashboard.putNumberArray("5826/swerve/robotPose", new double[]{robotPose.getX(), robotPose.getY(), robotPose.getZ()});
-                odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds());
             }
         }
 
@@ -76,6 +79,10 @@ public class CameraSubsystem extends SubsystemBase {
         }
     }
 
+    @FunctionalInterface
+    public interface TriConsumer<T, U, V> {
+        void accept(T t, U u, V v);
+    }
 }
 
 
