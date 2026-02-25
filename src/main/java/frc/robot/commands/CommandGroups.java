@@ -127,6 +127,10 @@ public class CommandGroups {
         return conveyor.getConveyorCommand().alongWith(index.getIndexCommand(), intake.getIntakeCommand());
     }
 
+    public Command getDejammerCommand(){
+        return intake.getReverseIntakeCommand().alongWith(conveyor.getReverseConveyorCommand()).withTimeout(1);
+    }
+
     public Command gotoCommand(Pose2d endPose){
         Command c = new Command() {
             Command pathCommand;
@@ -209,7 +213,5 @@ public class CommandGroups {
         };
         return LoggedCommand.logCommand(c, "move ("+x+","+y+")");
     }
-    public Command getDejammerCommand(){
-       return intake.getReverseIntakeCommand().alongWith(conveyor.getReverseConveyorCommand()).withTimeout(1);
-    }
+
 }
