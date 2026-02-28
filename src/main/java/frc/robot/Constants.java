@@ -26,11 +26,20 @@ public class Constants {
 
     public static class Intake {
         public static final int cMotorIDIntake1 = 5;
-        public static final double cArmMotorSpeed = 0.2;
+        public static final double cArmMotorSpeed = 0.1;
         public static final int cArmMotor = 7;
         public static final int cArmMotorFollower = 6;
         public static final double cSpeed = 1;
+        public static final double intakeP = 0.2;
+        public static final double intakeI = 0;
+        public static final double intakeD = 0;
+        public static final double intakeFF = 0;
+        public static final double cMaxIntakeShake = 10;
+        public static final double cMinIntakeShake = 1;
+
+
     }
+
     public static class Index {
         public static final int cInnerIndex = 15;
         public static final int cOuterIndex = 8;
@@ -41,6 +50,8 @@ public class Constants {
     public static class Climb{
         public static final int cClimber = 17;
     }
+
+    public static final int cHubBuffer = 5;
     /*
     1-4 swerve drive driver
     5 intake roller

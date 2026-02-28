@@ -19,9 +19,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.swerve.PriorityAimCommand;
 import frc.robot.commands.swerve.TeleopDriveCommand;
+import frc.robot.math.HubWidget;
 import frc.robot.subsystems.*;
 
 import java.io.File;
+import java.sql.Driver;
 
 
 public class RobotContainer {
@@ -55,7 +57,7 @@ public class RobotContainer {
         swerve.setDefaultCommand(new TeleopDriveCommand(swerve,xbox));
 
         SmartDashboard.putData("5826/powerdist", pdp);
-
+        SmartDashboard.putData("5826/Hub",new HubWidget());
     }
 
 
@@ -72,7 +74,7 @@ public class RobotContainer {
         new Trigger(() -> xbox.getBButton()).whileTrue(conveyor.getConveyorCommand());
         new Trigger(() -> xbox.getYButton()).whileTrue(commandGroups.getInteyor());
         new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
-
+        new Trigger(()-> xbox.getPOV()==0).onTrue(intake.moveIntake());
 
         new Trigger(() -> xbox.getStartButton()).whileTrue(index.getIndexCommand());
         //new Trigger(() -> xbox.getRightTriggerAxis()> 0.5).whileTrue(commandGroups.getDumbShootGroup());
@@ -82,6 +84,7 @@ public class RobotContainer {
 
 
     }
+
 
 
     public Command getAutonomousCommand() {
