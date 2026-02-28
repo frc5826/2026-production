@@ -12,10 +12,6 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.swerve.PriorityAimCommand;
 import frc.robot.math.localization.Locations;
 import frc.robot.subsystems.*;
-import org.json.simple.parser.ParseException;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 public class CommandGroups {
     private CameraSubsystem camera;
@@ -26,7 +22,6 @@ public class CommandGroups {
     private ShootSubsystem shoot;
     private SwerveSubsystem swerve;
     private IndexSubsystem index;
-    private SensorSubsystem sensor;
 
 
     private String[] autoNames = new String[]{
@@ -37,7 +32,7 @@ public class CommandGroups {
     };
     private SendableChooser<String> autoChooser = new SendableChooser<>();
 
-    public CommandGroups(CameraSubsystem camera, ClimbSubsystem climb, HoodSubsystem hood, ConveyorSubsystem conveyor, IntakeSubsystem intake, ShootSubsystem shoot, SwerveSubsystem swerve, IndexSubsystem index, SensorSubsystem sensor) {
+    public CommandGroups(CameraSubsystem camera, ClimbSubsystem climb, HoodSubsystem hood, ConveyorSubsystem conveyor, IntakeSubsystem intake, ShootSubsystem shoot, SwerveSubsystem swerve, IndexSubsystem index) {
         this.camera = camera;
         this.climb = climb;
         this.hood = hood;
@@ -46,7 +41,6 @@ public class CommandGroups {
         this.shoot = shoot;
         this.swerve = swerve;
         this.index = index;
-        this.sensor = sensor;
 
 
         for (String name : autoNames) {
@@ -62,7 +56,7 @@ public class CommandGroups {
     public Command getAuto() {
         //Things that happen every time in auto go in init.
         //todo
-        Command init = new InstantCommand().alongWith(intake.intakeDown());
+        Command init = new InstantCommand().alongWith(intake.intakeDownStart());
 
         if (autoChooser.getSelected().equals("empty")) {
             return init;
@@ -75,7 +69,7 @@ public class CommandGroups {
                     .andThen(getShootGroup());
 
         } else if (autoChooser.getSelected().equals("humanPlayerGrab+Shoot")) {
-            return AutoBuilder.buildAuto("toHumanPlayerPath").until(sensor.getBeamBreak())
+            return AutoBuilder.buildAuto("toHumanPlayerPath").until(() -> shoot.getCANRange())
                     .andThen(AutoBuilder.buildAuto("awayHumanPlayerPath"))
                     .andThen(getShootGroup());
 

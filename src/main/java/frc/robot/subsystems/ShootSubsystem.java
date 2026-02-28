@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 
+import com.ctre.phoenix6.configs.ProximityParamsConfigs;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
@@ -19,6 +21,8 @@ import frc.robot.math.PID;
 
 import java.util.function.DoubleSupplier;
 
+import static frc.robot.Constants.Sensor.cCANBusName;
+import static frc.robot.Constants.Sensor.cCANRangeID;
 import static frc.robot.Constants.Shooter.*;
 
 public class ShootSubsystem extends LoggedSubsystem {
@@ -30,12 +34,18 @@ public class ShootSubsystem extends LoggedSubsystem {
     private DigitalInput beamBreak;
     private boolean stop = true;
     private Timer debouncer;
+    private CANrange canRange;
+    private ProximityParamsConfigs canProximity, canProximityConfindence;
+
 
     public ShootSubsystem() {
         pid = new PID(cFlywheelPID, 10, -0.2, 0, () -> getCurrentVelocity());
         controller = new FlywheelController(cV, pid, cS);
         beamBreak = new DigitalInput(0);
         debouncer = new Timer();
+        canRange = new CANrange(cCANRangeID, cCANBusName);
+        canProximity = new ProximityParamsConfigs().withProximityThreshold(2);
+        canRange.getConfigurator().apply(canProximity);
 
         SmartDashboard.putData("5826/shoot/pid", pid);
         SmartDashboard.putData("5826/shoot/controller", controller);
@@ -50,15 +60,20 @@ public class ShootSubsystem extends LoggedSubsystem {
 
     }
 
+    public boolean getCANRange() {
+        return canRange.getIsDetected().getValue();
+    }
+
     @Override
     public void periodic() {
         double output = controller.calculate();
         SmartDashboard.putNumber("5826/shoot/speed🏃‍♂️", getCurrentVelocity());
         SmartDashboard.putBoolean("5826/shoot/isAtGoalSpeed", isAtGoalSpeed());
+        SmartDashboard.putBoolean("5826/shoot/canRange", getCANRange());
         if (stop) {
             motor1.setVoltage(cS+cV*2000);
         } else motor1.setVoltage(output);
-        if(!beamBreak.get()){
+        if(getCANRange()){
             debouncer.restart();
         }
 

@@ -50,8 +50,9 @@ public class Constants {
     public static class Climb{
         public static final int cClimber = 17;
     }
-
+    
     public static final int cHubBuffer = 5;
+
     /*
     1-4 swerve drive driver
     5 intake roller
