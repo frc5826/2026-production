@@ -56,7 +56,7 @@ public class CommandGroups {
     public Command getAuto() {
         //Things that happen every time in auto go in init.
         //todo
-        Command init = new InstantCommand().alongWith(intake.intakeDownStart());
+        Command init = new InstantCommand().alongWith(intake.intakeDown());
 
         if (autoChooser.getSelected().equals("empty")) {
             return init;
@@ -95,6 +95,8 @@ public class CommandGroups {
         }
         return new InstantCommand();
     }
+
+
 
     public Command getShootGroup() {
         return getSpinUpAim().andThen(Commands.parallel(

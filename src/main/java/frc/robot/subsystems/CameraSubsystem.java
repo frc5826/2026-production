@@ -25,6 +25,8 @@ import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 
+import static frc.robot.Constants.Vision.*;
+
 public class CameraSubsystem extends SubsystemBase {
     private List<Camera> cameras = new ArrayList<>(5);
     private AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
@@ -34,9 +36,9 @@ public class CameraSubsystem extends SubsystemBase {
 
         this.odometry = odometry;
         cameras.add(
-                new Camera("Arducam_1", new Translation3d(0.29, 0.27, 0.749), new Rotation3d(1.5708, 0, 0)));
+                new Camera("Arducam_1", new Translation3d(0.29, -0.233, 0.27), new Rotation3d(0, 0, Math.toRadians(90))));
         cameras.add(
-                new Camera("Arducam_2", new Translation3d(0.29, 0.27, -0.749), new Rotation3d(4.71239, 0, 0)));
+                new Camera("Arducam_2", new Translation3d(0.29, 0.233, 0.27), new Rotation3d(0, 0, Math.toRadians(270))));
         cameras.add(
                 new Camera("Arducam_3", new Translation3d(0.3225, 0.0025, 0.29), new Rotation3d(0, -Math.toRadians(9), 0)));
     }
@@ -48,10 +50,19 @@ public class CameraSubsystem extends SubsystemBase {
             Pose3d cameraPose;
             if (result.hasTargets()) {
                 if (result.getMultiTagResult().isPresent()) {
-                    cameraPose = Pose3d.kZero.plus(result.getMultiTagResult().get().estimatedPose.best);
+                    var multiTag = result.getMultiTagResult().get();
+                    cameraPose = Pose3d.kZero.plus(multiTag.estimatedPose.best);
                     Pose3d robotPose = cameraPose.plus(camera.robotToCamera.inverse());
-                    //TODO look at which ids were used and find avg distance to set stdDev
-                    odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds(), VecBuilder.fill(0.1,0.1,1));
+                    double avgDistance = 0;
+                    for (short id : multiTag.fiducialIDsUsed){
+                        avgDistance = avgDistance + layout.getTagPose(id).get().getTranslation().getDistance(cameraPose.getTranslation());
+                    }
+                    avgDistance = avgDistance / multiTag.fiducialIDsUsed.size();
+                    if (avgDistance > cDistanceCutoff){
+                        return;
+                    }
+                    //TODO Check Constants Reliability
+                    odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds(), VecBuilder.fill(0.1,0.1,1).times(avgDistance));
                 } else {
                     return;
                 }

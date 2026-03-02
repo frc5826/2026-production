@@ -1,9 +1,18 @@
 package frc.robot;
 
 import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.path.PathConstraints;
 
 public class Constants {
 
+
+    public static class Swerve {
+        //TODO
+        public static final PathConstraints cSlowPath = new PathConstraints(1, 1,1, 1);
+        public static final PathConstraints cFastPath = new PathConstraints(1, 1,1, 1);
+
+
+    }
 
     public static class Shooter {
         public static final double cFlywheelTolerance = 50;//todo
@@ -49,6 +58,10 @@ public class Constants {
     }
     public static class Climb{
         public static final int cClimber = 17;
+    }
+
+    public static class Vision{
+        public static final double cDistanceCutoff = 4; //Meters
     }
     
     public static final int cHubBuffer = 5;

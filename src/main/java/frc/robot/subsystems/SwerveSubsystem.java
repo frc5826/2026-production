@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -125,6 +126,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
                 () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
                 this
         );
+        PathfindingCommand.warmupCommand().schedule();
     }
 
     public Pose2d getPose() {
