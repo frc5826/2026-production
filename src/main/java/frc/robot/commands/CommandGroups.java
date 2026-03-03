@@ -56,7 +56,7 @@ public class CommandGroups {
     public Command getAuto() {
         //Things that happen every time in auto go in init.
         //todo
-        Command init = new InstantCommand().alongWith(intake.intakeDown());
+        Command init = new InstantCommand().alongWith(intake.intakeDown(), new InstantCommand(climb::zeroClimb, climb));
 
         if (autoChooser.getSelected().equals("empty")) {
             return init;

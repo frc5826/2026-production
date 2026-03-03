@@ -10,8 +10,6 @@ public class Constants {
         //TODO
         public static final PathConstraints cSlowPath = new PathConstraints(1, 1,1, 1);
         public static final PathConstraints cFastPath = new PathConstraints(1, 1,1, 1);
-
-
     }
 
     public static class Shooter {
@@ -58,6 +56,9 @@ public class Constants {
     }
     public static class Climb{
         public static final int cClimber = 17;
+        public static final double cDownPos = 0; //TODO Find real value
+        public static final double cUpPos = 1; //TODO Find real value
+        public static final double cConfigMultiplier = ((1.0/25.0) * (1.124 + 0.25) * Math.PI) / 10.875;
     }
 
     public static class Vision{

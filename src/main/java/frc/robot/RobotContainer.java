@@ -36,13 +36,12 @@ public class RobotContainer {
     public IntakeSubsystem intake = new IntakeSubsystem();
     public ConveyorSubsystem conveyor = new ConveyorSubsystem();
     public IndexSubsystem index = new IndexSubsystem();
-    public SensorSubsystem sensor = new SensorSubsystem();
     public PriorityAimCommand priority = new PriorityAimCommand(swerve, cameras);
     public PowerDistribution pdp = new PowerDistribution(50, PowerDistribution.ModuleType.kRev);
 
     public XboxController xbox = new XboxController(1);
 
-    public CommandGroups commandGroups = new CommandGroups(cameras, climb, hood, conveyor, intake, shoot, swerve, index, sensor);
+    public CommandGroups commandGroups = new CommandGroups(cameras, climb, hood, conveyor, intake, shoot, swerve, index);
 
     public RobotContainer() {
         if (new File("/U/logs").isDirectory()) {
@@ -69,10 +68,12 @@ public class RobotContainer {
         new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
         new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(priority);
         new Trigger(() -> xbox.getRightBumperButton()).whileTrue(commandGroups.getDumbShootGroup());
+        new Trigger(() -> xbox.getBButton()).onTrue(climb.climbCommand());
+        new Trigger(() -> xbox.getYButton()).onTrue(climb.downCommand());
 //        new Trigger(() -> xbox.getLeftBumperButton()).toggleOnTrue(commandGroups.getSpinUpAim());
         new Trigger(() -> xbox.getXButton()).onTrue(commandGroups.getDejammerCommand());
-        new Trigger(() -> xbox.getBButton()).whileTrue(conveyor.getConveyorCommand());
-        new Trigger(() -> xbox.getYButton()).whileTrue(commandGroups.getInteyor());
+//        new Trigger(() -> xbox.getBButton()).whileTrue(conveyor.getConveyorCommand());
+//        new Trigger(() -> xbox.getYButton()).whileTrue(commandGroups.getInteyor());
         new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
         new Trigger(()-> xbox.getPOV()==0).onTrue(intake.moveIntake());
 
