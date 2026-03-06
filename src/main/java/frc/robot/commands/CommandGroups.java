@@ -56,7 +56,7 @@ public class CommandGroups {
     public Command getAuto() {
         //Things that happen every time in auto go in init.
         //todo
-        Command init = new InstantCommand().alongWith(intake.intakeDown(), new InstantCommand(climb::zeroClimb, climb));
+        Command init = new InstantCommand().alongWith(intake.intakeDown());
 
         if (autoChooser.getSelected().equals("empty")) {
             return init;
@@ -107,8 +107,10 @@ public class CommandGroups {
     }
 
     public Command getDumbShootGroup() {
-        return shoot.getShootCommand(3000).andThen(getInteyor())
-                .finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
+        return shoot.getShootCommand(3000)
+                .andThen(getInteyor())
+                .finallyDo(shoot::stopShoot);
+        //.until(shoot::isDoneShooting)
     }
 
     public Command getSpinUpAim() {
@@ -120,7 +122,7 @@ public class CommandGroups {
     }
 
     public Command getInteyor() {
-        return conveyor.getConveyorCommand().alongWith(index.getIndexCommand(), intake.getIntakeCommand());
+        return conveyor.getConveyorCommand().alongWith(index.getIndexCommand().alongWith(intake.getIntakeCommand()));
     }
 
     public Command getDejammerCommand(){

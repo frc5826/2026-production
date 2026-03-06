@@ -33,6 +33,8 @@ import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 
+import static frc.robot.Constants.Swerve.*;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -67,6 +69,9 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
         SmartDashboard.putData("5826/swerve/field", swerveDrive.field);
         SmartDashboard.putData("5826/swerve/turncontroller", turnController);
+        SmartDashboard.putNumber("5826/swerve/ff/ks",swerveDrive.getModules()[0].getDefaultFeedforward().getKs());
+        SmartDashboard.putNumber("5826/swerve/ff/kv",swerveDrive.getModules()[0].getDefaultFeedforward().getKv());
+        SmartDashboard.putNumber("5826/swerve/ff/ka",swerveDrive.getModules()[0].getDefaultFeedforward().getKa());
     }
 
     @Override
@@ -119,8 +124,8 @@ public class SwerveSubsystem extends LoggedSubsystem {
                 () -> swerveDrive.getFieldVelocity(),
                 this::drive,
                 new PPHolonomicDriveController(
-                        new PIDConstants(1, 0, 0),
-                        new PIDConstants(1, 0, 0)
+                        cPathDrivePID,
+                        cPathTurnPID
                 ),
                 config,
                 () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red,

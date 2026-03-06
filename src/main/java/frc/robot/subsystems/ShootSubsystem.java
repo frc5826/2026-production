@@ -21,8 +21,7 @@ import frc.robot.math.PID;
 
 import java.util.function.DoubleSupplier;
 
-import static frc.robot.Constants.Sensor.cCANBusName;
-import static frc.robot.Constants.Sensor.cCANRangeID;
+
 import static frc.robot.Constants.Shooter.*;
 
 public class ShootSubsystem extends LoggedSubsystem {
@@ -35,7 +34,6 @@ public class ShootSubsystem extends LoggedSubsystem {
     private boolean stop = true;
     private Timer debouncer;
     private CANrange canRange;
-    private ProximityParamsConfigs canProximity, canProximityConfindence;
 
 
     public ShootSubsystem() {
@@ -44,8 +42,9 @@ public class ShootSubsystem extends LoggedSubsystem {
         beamBreak = new DigitalInput(0);
         debouncer = new Timer();
         canRange = new CANrange(cCANRangeID, cCANBusName);
-        canProximity = new ProximityParamsConfigs().withProximityThreshold(2);
-        canRange.getConfigurator().apply(canProximity);
+        var canRangeConfig = new ProximityParamsConfigs().withProximityThreshold(0.5)
+                .withMinSignalStrengthForValidMeasurement(1);
+        canRange.getConfigurator().apply(canRangeConfig);
 
         SmartDashboard.putData("5826/shoot/pid", pid);
         SmartDashboard.putData("5826/shoot/controller", controller);

@@ -6,7 +6,7 @@
   },
   "angle": {
     "type": "sparkmax",
-    "id": 14,
+    "id": 17,
     "canbus": null
   },
   "encoder": {

@@ -23,41 +23,43 @@ public class ClimbSubsystem extends LoggedSubsystem {
 
     public ClimbSubsystem (){
 
-        motor = new SparkMax(cClimber, SparkLowLevel.MotorType.kBrushless);
-        SparkBaseConfig config = new SparkMaxConfig()
-                .apply(new EncoderConfig().positionConversionFactor(cConfigMultiplier))
-                .apply(new ClosedLoopConfig().pid(0, 0, 0).outputRange(-1,1));
-        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+//        motor = new SparkMax(cClimber, SparkLowLevel.MotorType.kBrushless);
+//        SparkBaseConfig config = new SparkMaxConfig()
+//                .apply(new EncoderConfig().positionConversionFactor(cConfigMultiplier))
+//                .apply(new ClosedLoopConfig().pid(0, 0, 0).outputRange(-1,1));
+//        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
 
     @Override
     public void periodic() {
         super.periodic();
-        SmartDashboard.putNumber("5826/climb/position", motor.getEncoder().getPosition());
+//        SmartDashboard.putNumber("5826/climb/position", motor.getEncoder().getPosition());
     }
 
-    public void hookDown() {
-        motor.getClosedLoopController().setSetpoint(cDownPos, SparkBase.ControlType.kPosition);
-    }
+//    public void hookDown() {
+//        motor.getClosedLoopController().setSetpoint(cDownPos, SparkBase.ControlType.kPosition);
+//    }
+//
+//    public void hookUp() {
+//        motor.getClosedLoopController().setSetpoint(cUpPos, SparkBase.ControlType.kPosition);
+//    }
+//
+//    public void zeroClimb () {
+//        motor.getEncoder().setPosition(0);
+//    }
 
-    public void hookUp() {
-        motor.getClosedLoopController().setSetpoint(cUpPos, SparkBase.ControlType.kPosition);
-    }
-
-    public void zeroClimb () {
-        motor.getEncoder().setPosition(0);
-    }
-
-    public Command climbCommand () {
-        Command c = new InstantCommand(this::hookDown,this);
-        return LoggedCommand.logCommand(c,"Climb Command");
-    }
-
-    public Command downCommand () {
-        Command c = new InstantCommand(this::hookUp, this);
-        return LoggedCommand.logCommand(c, "Down Command");
-    }
+//    public Command climbCommand () {
+////        Command c = new InstantCommand(this::hookDown,this);
+////        return LoggedCommand.logCommand(c,"Climb Command");
+//        return null;
+//    }
+//
+//    public Command downCommand () {
+////        Command c = new InstantCommand(this::hookUp, this);
+////        return LoggedCommand.logCommand(c, "Down Command");
+//        return null;
+//    }
 }
 
 

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
 
@@ -8,8 +9,20 @@ public class Constants {
 
     public static class Swerve {
         //TODO
-        public static final PathConstraints cSlowPath = new PathConstraints(1, 1,1, 1);
-        public static final PathConstraints cFastPath = new PathConstraints(1, 1,1, 1);
+        public static final PathConstraints cSlowPath = new PathConstraints(
+                1,
+                1,
+                1,
+                1
+        );
+        public static final PathConstraints cFastPath = new PathConstraints(
+                1,
+                1,
+                1,
+                1
+        );
+        public static final PIDConstants cPathDrivePID = new PIDConstants(0,0,0);
+        public static final PIDConstants cPathTurnPID = new PIDConstants(0,0,0);
     }
 
     public static class Shooter {
@@ -19,6 +32,9 @@ public class Constants {
         public static final double cS = 0.14;
         public static final int cMotorIDShooter1 = 9;
         public static final int cMotorIDShooter2 = 10;
+        public static final int cCANRangeID = 20;
+        public static final CANBus cCANBusName = CANBus.roboRIO();
+
 
     }
 
@@ -33,7 +49,8 @@ public class Constants {
 
     public static class Intake {
         public static final int cMotorIDIntake1 = 5;
-        public static final double cArmMotorSpeed = 0.1;
+        public static final double cArmMotorSpeed = 0.2;
+        public static final double cShakeSpeed = 1.5;
         public static final int cArmMotor = 7;
         public static final int cArmMotorFollower = 6;
         public static final double cSpeed = 1;
@@ -41,30 +58,31 @@ public class Constants {
         public static final double intakeI = 0;
         public static final double intakeD = 0;
         public static final double intakeFF = 0;
-        public static final double cMaxIntakeShake = 10;
-        public static final double cMinIntakeShake = 1;
+        public static final double cMaxIntakeShake = -20;
+        public static final double cMinIntakeShake = -1;
 
 
     }
 
     public static class Index {
-        public static final int cInnerIndex = 15;
+        public static final int cInnerIndex = 14;
         public static final int cOuterIndex = 8;
-        public static final double cIndexerSpeed = 1;
+        public static final double cIndexerSpeed = -1;
         public static final double cConveyorSpeed = 1;
 
     }
-    public static class Climb{
+
+    public static class Climb {
         public static final int cClimber = 17;
-        public static final double cDownPos = 0; //TODO Find real value
-        public static final double cUpPos = 1; //TODO Find real value
-        public static final double cConfigMultiplier = ((1.0/25.0) * (1.124 + 0.25) * Math.PI) / 10.875;
+        public static final double cDownPos = 0;
+        public static final double cUpPos = 1;
+        public static final double cConfigMultiplier = ((1.0 / 25.0) * (1.124 + 0.25) * Math.PI) / 10.875;
     }
 
-    public static class Vision{
+    public static class Vision {
         public static final double cDistanceCutoff = 4; //Meters
     }
-    
+
     public static final int cHubBuffer = 5;
 
     /*
@@ -73,9 +91,9 @@ public class Constants {
     6-7 intake arm
     8 conveyor
     9-10 shooter
-    11-14 swerve drive angle
-    15 inner indexer
+    11-13 & 17 swerve drive angle
+    14 inner indexer
     16 hood
-    17 climb
+    15 climb
      */
 }

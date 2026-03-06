@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.commands.LoggedCommand;
@@ -20,6 +21,7 @@ public class IntakeSubsystem extends LoggedSubsystem {
     private SparkMax armMotor;
     private SparkMax armMotorFollower;
     private Subsystem armSubsystem = new LoggedSubsystem();
+    private double armSetpoint;
     private boolean armMovingUp = true;
 
     public IntakeSubsystem() {
@@ -31,7 +33,7 @@ public class IntakeSubsystem extends LoggedSubsystem {
         SparkBaseConfig config = new SparkMaxConfig().smartCurrentLimit(20)
                 .apply(new ClosedLoopConfig().pid(intakeP, intakeI, intakeD).outputRange(-0.2, 0.2))
                 .idleMode(SparkBaseConfig.IdleMode.kCoast)
-                .apply(new EncoderConfig().positionConversionFactor(3 * 5 * 5 * 2 / 360.0));
+                .apply(new EncoderConfig().positionConversionFactor(3 * 5 * 5 * 2 * 6 / 360.0));
         armMotor.configure(config.inverted(false), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         armMotorFollower.configure(config.follow(armMotor, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -70,31 +72,32 @@ public class IntakeSubsystem extends LoggedSubsystem {
     public Command moveIntake() {
         Command c = new RunCommand(
                 () -> {
-                    setIntakePositionDegrees(45);
+                    setIntakePositionDegrees(-45);
                 }
                 , armSubsystem);
         return c;
     }
 
     public Command shakeIntakeCommand() {
-        Command c = new RunCommand(
+        Command c = new InstantCommand(()->armSetpoint = 0).
+                andThen(new RunCommand(
                 () -> {
-                    double currentPosition = armMotor.getClosedLoopController().getSetpoint();
-                    if (currentPosition > cMaxIntakeShake) {
+//                    double currentPosition = armMotor.getClosedLoopController().getSetpoint();
+                    if (armSetpoint < cMaxIntakeShake) {
                         armMovingUp = false;
-                    } else if (currentPosition < cMinIntakeShake) {
+                    } else if (armSetpoint > cMinIntakeShake) {
                         armMovingUp = true;
                     }
 
                     if (armMovingUp) {
-                        currentPosition+=0.05;
-                        armMotor.getClosedLoopController().setSetpoint(currentPosition, SparkBase.ControlType.kPosition);
+                        armSetpoint-=cShakeSpeed;
+                        armMotor.getClosedLoopController().setSetpoint(armSetpoint, SparkBase.ControlType.kPosition);
                     } else if (!armMovingUp) {
-                        currentPosition-=0.05;
-                        armMotor.getClosedLoopController().setSetpoint(currentPosition, SparkBase.ControlType.kPosition);
+                        armSetpoint+=cShakeSpeed;
+                        armMotor.getClosedLoopController().setSetpoint(armSetpoint, SparkBase.ControlType.kPosition);
                     }
                 }, armSubsystem
-        ).finallyDo(() -> {
+        )).finallyDo(() -> {
             armMotor.getClosedLoopController().setSetpoint(0, SparkBase.ControlType.kPosition);
         });
         return LoggedCommand.logCommand(c,"Intake Shake Command");
