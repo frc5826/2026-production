@@ -6,13 +6,14 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.WrapperCommand;
 import frc.robot.commands.LoggedCommand;
 import frc.robot.math.localization.Locations;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import static frc.robot.Constants.Swerve.*;
 
-public class PathToFromMid extends Command{
+public class PathToFromMid extends Command {
 
     private SwerveSubsystem swerve;
     private Command pathCommand;
@@ -21,7 +22,7 @@ public class PathToFromMid extends Command{
         return LoggedCommand.logCommand(new PathToFromMid(swerve), "PathToFromMid");
     }
 
-    private PathToFromMid(SwerveSubsystem swerve){
+    private PathToFromMid(SwerveSubsystem swerve) {
 
         this.swerve = swerve;
         addRequirements(swerve);
@@ -31,20 +32,18 @@ public class PathToFromMid extends Command{
     @Override
     public void initialize() {
         super.initialize();
-            if (Locations.getRightAllianceZonePose().contains(swerve.getPose().getTranslation())){
-                pathCommand = getPathCommand("midFromRight");
-            } else if (Locations.getLeftAllianceZonePose().contains(swerve.getPose().getTranslation())) {
-                pathCommand = getPathCommand("midFromLeft");
-            } else if (Locations.getLeftSideMidPose().contains(swerve.getPose().getTranslation())) {
-                pathCommand = getPathCommand("leftFromMid");
-            } else if (Locations.getRightSideMidPose().contains(swerve.getPose().getTranslation())) {
-                pathCommand = getPathCommand("rightFromMid");
-            }
-            else {
-                pathCommand = new PrintCommand("Invalid Position");
-            }
-
-
+        if (Locations.getRightAllianceZonePose().contains(swerve.getPose().getTranslation())) {
+            pathCommand = getPathCommand("midFromRight");
+        } else if (Locations.getLeftAllianceZonePose().contains(swerve.getPose().getTranslation())) {
+            pathCommand = getPathCommand("midFromLeft");
+        } else if (Locations.getLeftSideMidPose().contains(swerve.getPose().getTranslation())) {
+            pathCommand = getPathCommand("leftFromMid");
+        } else if (Locations.getRightSideMidPose().contains(swerve.getPose().getTranslation())) {
+            pathCommand = getPathCommand("rightFromMid");
+        } else {
+            pathCommand = new PrintCommand("Invalid Position");
+        }
+        pathCommand.initialize();
     }
 
     @Override
@@ -68,8 +67,7 @@ public class PathToFromMid extends Command{
     private Command getPathCommand(String name) {
         try {
             return AutoBuilder.pathfindThenFollowPath(PathPlannerPath.fromPathFile(name), cSlowPath);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new InstantCommand();
         }

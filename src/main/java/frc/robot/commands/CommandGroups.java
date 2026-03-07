@@ -6,12 +6,16 @@ import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.Constants;
 import frc.robot.commands.swerve.PriorityAimCommand;
 import frc.robot.math.localization.Locations;
 import frc.robot.subsystems.*;
+
+import static frc.robot.Constants.Swerve.*;
 
 public class CommandGroups {
     private CameraSubsystem camera;
@@ -61,7 +65,7 @@ public class CommandGroups {
         if (autoChooser.getSelected().equals("empty")) {
             return init;
         } else if (autoChooser.getSelected().equals("shootOnly")) {
-            return init.andThen(moveCommand(-2, 0)).andThen(getShootGroup());
+            return init.andThen(moveCommand(-2, 0,cSlowPath,0)).andThen(getShootGroup());
 
         } else if (autoChooser.getSelected().equals("depotGrab+Shoot")) {
             return init.alongWith(intake.getIntakeCommand(), getPathCommand("toDepotCommand"))
@@ -96,11 +100,22 @@ public class CommandGroups {
         return new InstantCommand();
     }
 
+    public Command getPathDriveTestCommand() {
+        return moveCommand(1, 0, cSlowPath,0).andThen(
+                moveCommand(0,1,cSlowPath,0),
+                moveCommand(-1,0,cSlowPath,0),
+                moveCommand(0,-1,cSlowPath,0)
+        );
+    }
 
+    public Command getPathTurnTestCommand() {
+        return gotoCommand(new Pose2d(14,2, Rotation2d.kZero),cSlowPath,1)
+                .andThen(gotoCommand(new Pose2d(14,4,Rotation2d.k180deg),cSlowPath,0));
+    }
 
     public Command getShootGroup() {
         return getSpinUpAim().andThen(Commands.parallel(
-                new PriorityAimCommand(swerve, camera),
+                new PriorityAimCommand(swerve),
                 shoot.getShootCommand(swerve::getHubDistance, true),
                 getInteyor()
         )).finallyDo(shoot::stopShoot).until(shoot::isDoneShooting);
@@ -116,7 +131,7 @@ public class CommandGroups {
     public Command getSpinUpAim() {
         return shoot.getShootCommand(swerve::getHubDistance, true)
                 .alongWith(
-                        new PriorityAimCommand(swerve, camera)
+                        new PriorityAimCommand(swerve)
 //                ).until(()->shoot.isAtGoalSpeed());
                 ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
     }
@@ -129,7 +144,7 @@ public class CommandGroups {
         return intake.getReverseIntakeCommand().alongWith(conveyor.getReverseConveyorCommand()).withTimeout(1);
     }
 
-    public Command gotoCommand(Pose2d endPose){
+    public Command gotoCommand(Pose2d endPose, PathConstraints constraints, double endSpeed){
         Command c = new Command() {
             Command pathCommand;
             {addRequirements(swerve);}
@@ -143,9 +158,9 @@ public class CommandGroups {
                 );
                 var path = new PathPlannerPath(
                         waypoints,
-                        new PathConstraints(2, 4, 3, 6),
+                        constraints,
                         new IdealStartingState(0, startPose.getRotation()),
-                        new GoalEndState(0, endPose.getRotation())
+                        new GoalEndState(endSpeed, endPose.getRotation())
                 );
                 path.preventFlipping = true;
                 pathCommand = AutoBuilder.followPath(path);
@@ -170,7 +185,7 @@ public class CommandGroups {
         return LoggedCommand.logCommand(c, "Drive to " + endPose);
     }
 
-    public Command moveCommand(double x, double y){
+    public Command moveCommand(double x, double y, PathConstraints constraints, double endSpeed){
         Command c = new Command() {
             Command pathCommand;
             {addRequirements(swerve);}
@@ -187,7 +202,7 @@ public class CommandGroups {
                         waypoints,
                         new PathConstraints(2, 4, 3, 6),
                         new IdealStartingState(0, startPose.getRotation()),
-                        new GoalEndState(0, endPose.getRotation())
+                        new GoalEndState(endSpeed, endPose.getRotation())
                 );
                 path.preventFlipping = true;
                 pathCommand = AutoBuilder.followPath(path);
@@ -209,7 +224,7 @@ public class CommandGroups {
                 return pathCommand.isFinished();
             }
         };
-        return LoggedCommand.logCommand(c, "move ("+x+","+y+")");
+        return LoggedCommand.logCommand(c, "move +("+x+","+y+")");
     }
 
 }

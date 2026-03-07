@@ -36,9 +36,9 @@ public class CameraSubsystem extends SubsystemBase {
 
         this.odometry = odometry;
         cameras.add(
-                new Camera("Arducam_1", new Translation3d(0.29, -0.233, 0.27), new Rotation3d(0, 0, Math.toRadians(90))));
+                new Camera("Arducam_2", new Translation3d(0.29, -0.233, 0.27), new Rotation3d(0, 0, Math.toRadians(90))));
         cameras.add(
-                new Camera("Arducam_2", new Translation3d(0.29, 0.233, 0.27), new Rotation3d(0, 0, Math.toRadians(270))));
+                new Camera("Arducam_1", new Translation3d(0.29, 0.233, 0.27), new Rotation3d(0, 0, Math.toRadians(270))));
         cameras.add(
                 new Camera("Arducam_3", new Translation3d(0.3225, 0.0025, 0.29), new Rotation3d(0, -Math.toRadians(9), 0)));
     }
@@ -64,16 +64,16 @@ public class CameraSubsystem extends SubsystemBase {
                     //TODO Check Constants Reliability
                     odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds(), VecBuilder.fill(0.1,0.1,1).times(avgDistance));
                 } else {
-                    return;
+                    PhotonTrackedTarget target = result.getBestTarget();
+                    if (target.getPoseAmbiguity() > 0.2 || target.getArea() < 0.3) {
+                        return;
+                    }
+                    Pose3d robotPose = layout.getTagPose(target.getFiducialId()).get()
+                            .transformBy(target.getBestCameraToTarget().inverse())
+                            .transformBy(camera.robotToCamera.inverse());
+                    odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds(),
+                            VecBuilder.fill(0.1,0.1,1).times(target.getBestCameraToTarget().getTranslation().getNorm()));
                 }
-//                else {
-//                    PhotonTrackedTarget target = result.getBestTarget();
-//                    if (target.getPoseAmbiguity() > 0.2) {
-//                        return;
-//                    }
-//                    cameraPose = layout.getTagPose(target.fiducialId).get().plus(target.bestCameraToTarget);
-//
-//                }
             }
         }
 

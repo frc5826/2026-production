@@ -7,6 +7,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.revrobotics.util.StatusLogger;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -17,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CommandGroups;
+import frc.robot.commands.swerve.PathToFromMid;
 import frc.robot.commands.swerve.PriorityAimCommand;
 import frc.robot.commands.swerve.TeleopDriveCommand;
 import frc.robot.math.HubWidget;
@@ -36,7 +39,6 @@ public class RobotContainer {
     public IntakeSubsystem intake = new IntakeSubsystem();
     public ConveyorSubsystem conveyor = new ConveyorSubsystem();
     public IndexSubsystem index = new IndexSubsystem();
-    public PriorityAimCommand priority = new PriorityAimCommand(swerve, cameras);
     public PowerDistribution pdp = new PowerDistribution(50, PowerDistribution.ModuleType.kRev);
 
     public XboxController xbox = new XboxController(1);
@@ -48,6 +50,11 @@ public class RobotContainer {
             DataLogManager.start("/U/logs");
             DriverStation.startDataLog(DataLogManager.getLog());
         }
+        UsbCamera driverView = CameraServer.startAutomaticCapture();
+        driverView.setFPS(7);
+        driverView.setExposureManual(20);
+        driverView.setBrightness(35);
+        driverView.setResolution(400,300);
         SignalLogger.enableAutoLogging(false);
         StatusLogger.disableAutoLogging();
 
@@ -61,28 +68,30 @@ public class RobotContainer {
 
 
     private void configureBindings() {
-
-//        new Trigger(() -> xbox.getRightBumperButton()).onTrue(commandGroups.getSpinUpAim());
-//        new Trigger(() -> xbox.getRightBumperButton()).onTrue(commandGroups.getSpinUpAim());
+        /* Triggers */
         new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
-        new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
-        new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(priority);
+        new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(new PriorityAimCommand(swerve));
+
+        /* Bumpers */
+        //new Trigger(() -> xbox.getLeftBumperButton())
         new Trigger(() -> xbox.getRightBumperButton()).whileTrue(commandGroups.getDumbShootGroup());
-//        new Trigger(() -> xbox.getBButton()).onTrue(climb.climbCommand());
-//        new Trigger(() -> xbox.getYButton()).onTrue(climb.downCommand());
-//        new Trigger(() -> xbox.getLeftBumperButton()).toggleOnTrue(commandGroups.getSpinUpAim());
+
+
+        /* A B X Y */
+        new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
+        new Trigger(()-> xbox.getBButton()).whileTrue(PathToFromMid.get(swerve));
+        new Trigger(()-> xbox.getYButton()).onTrue(new InstantCommand(swerve::resetDriveEncoders));
         new Trigger(() -> xbox.getXButton()).onTrue(commandGroups.getDejammerCommand());
 
-        new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
-        new Trigger(()-> xbox.getPOV()==0).whileTrue(intake.shakeIntakeCommand());
-
+        /* Menu Buttons */
         new Trigger(() -> xbox.getStartButton()).whileTrue(index.getIndexCommand());
-        //new Trigger(() -> xbox.getRightTriggerAxis()> 0.5).whileTrue(commandGroups.getDumbShootGroup());
-        //
-        //new Trigger(()->xbox.getLeftTriggerAxis()>0.25).toggleOnTrue(end priority aim);
-        //new Trigger(()->xbox.getYButton()).toggleOnTrue(climb);
+        new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
 
-
+        /* D - Pad */
+        new Trigger(()-> xbox.getPOV()==0).whileTrue(intake.shakeIntakeCommand());
+        new Trigger(()-> xbox.getPOV()== 90).whileTrue(commandGroups.getPathDriveTestCommand());
+        new Trigger(()-> xbox.getPOV()== 180).whileTrue(commandGroups.getPathTurnTestCommand());
+        //new Trigger(() - > xbox.getPOV() == 270))
     }
 
 
