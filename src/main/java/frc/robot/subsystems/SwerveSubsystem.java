@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.LoggedCommand;
@@ -61,12 +62,15 @@ public class SwerveSubsystem extends LoggedSubsystem {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        swerveDrive.setCosineCompensator(true);
+
         setupPathPlanner();
-        SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
 
         gyro = (AHRS) swerveDrive.getGyro().getIMU();
         turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 1, 0, 0, () -> getPose().getRotation().getRadians());
 
+        SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
         SmartDashboard.putData("5826/swerve/field", swerveDrive.field);
         SmartDashboard.putData("5826/swerve/turncontroller", turnController);
         SmartDashboard.putNumber("5826/swerve/ff/ks",swerveDrive.getModules()[0].getDefaultFeedforward().getKs());
@@ -142,7 +146,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
                 () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
                 this
         );
-        PathfindingCommand.warmupCommand().schedule();
+        CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
     }
 
     public Pose2d getPose() {

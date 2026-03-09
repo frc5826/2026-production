@@ -1,6 +1,5 @@
 package frc.robot.math.localization;
 
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -46,7 +45,7 @@ public class Locations {
 
     }
 
-    public static Rectangle2d getLeftAllianceZonePose() {
+    public static Rectangle2d getLeftAllianceZone() {
 
         Translation2d cornerA = new Translation2d(0, 4);
         Translation2d cornerB = new Translation2d(3.975, 8);
@@ -54,7 +53,7 @@ public class Locations {
         return new Rectangle2d(flip(cornerA), flip(cornerB));
     }
 
-    public static Rectangle2d getRightAllianceZonePose() {
+    public static Rectangle2d getRightAllianceZone() {
 
         Translation2d cornerA = new Translation2d(0, 0);
         Translation2d cornerB = new Translation2d(3.975, 4);
@@ -62,7 +61,7 @@ public class Locations {
         return new Rectangle2d(flip(cornerA), flip(cornerB));
     }
 
-    public static Rectangle2d getAllianceZonePose() {
+    public static Rectangle2d getAllianceZone() {
         //Center: , X: 4.616, Y: 8.1
         Translation2d cornerA = new Translation2d(0, 0);
         Translation2d cornerB = new Translation2d(4.616, 8.1);
@@ -71,7 +70,7 @@ public class Locations {
 
     }
 
-    public static Rectangle2d getLeftSideMidPose() {
+    public static Rectangle2d getLeftSideMidZone() {
 
         Translation2d cornerA = new Translation2d(4.616, 4.050);
         Translation2d cornerB = new Translation2d(11.915, 8.1);
@@ -80,7 +79,7 @@ public class Locations {
 
     }
 
-    public static Rectangle2d getRightSideMidPose() {
+    public static Rectangle2d getRightSideMidZone() {
 
         Translation2d cornerA = new Translation2d(4.616, 0);
         Translation2d cornerB = new Translation2d(11.915, 4.05);

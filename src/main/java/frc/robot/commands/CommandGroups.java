@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
-import frc.robot.Constants;
 import frc.robot.commands.swerve.PriorityAimCommand;
 import frc.robot.math.localization.Locations;
 import frc.robot.subsystems.*;
@@ -73,15 +72,16 @@ public class CommandGroups {
                     .andThen(getShootGroup());
 
         } else if (autoChooser.getSelected().equals("humanPlayerGrab+Shoot")) {
-            return AutoBuilder.buildAuto("toHumanPlayerPath").until(() -> shoot.getCANRange())
-                    .andThen(AutoBuilder.buildAuto("awayHumanPlayerPath"))
+            return getPathCommand("toHumanPlayerPath")
+                    .andThen(new WaitUntilCommand(() -> shoot.getCANRange()))
+                    .andThen(getPathCommand("awayHumanPlayerPath"))
                     .andThen(getShootGroup());
 
         } else if (autoChooser.getSelected().equals("runOutToMiddle+Shoot")) {
-            if (Locations.getLeftAllianceZonePose().contains(swerve.getPose().getTranslation()))
-                return getInteyor().alongWith(AutoBuilder.buildAuto("toMiddleFromLeftPath").andThen(getShootGroup()));
-            else if (Locations.getRightAllianceZonePose().contains(swerve.getPose().getTranslation())) {
-                return getInteyor().alongWith(AutoBuilder.buildAuto("toMiddleFromRightPath").andThen(getShootGroup()));
+            if (Locations.getLeftAllianceZone().contains(swerve.getPose().getTranslation()))
+                return getInteyor().alongWith(getPathCommand("toMiddleFromLeftPath").andThen(getShootGroup()));
+            else if (Locations.getRightAllianceZone().contains(swerve.getPose().getTranslation())) {
+                return getInteyor().alongWith(getPathCommand("toMiddleFromRightPath").andThen(getShootGroup()));
             }
 
         }

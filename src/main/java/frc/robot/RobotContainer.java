@@ -79,8 +79,8 @@ public class RobotContainer {
 
         /* A B X Y */
         new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
-        new Trigger(()-> xbox.getBButton()).whileTrue(PathToFromMid.get(swerve));
-        new Trigger(()-> xbox.getYButton()).onTrue(new InstantCommand(swerve::resetDriveEncoders));
+        new Trigger(()-> xbox.getBButton()).onTrue(climb.downCommand());
+        new Trigger(()-> xbox.getYButton()).onTrue(climb.climbCommand());
         new Trigger(() -> xbox.getXButton()).onTrue(commandGroups.getDejammerCommand());
 
         /* Menu Buttons */
@@ -92,6 +92,7 @@ public class RobotContainer {
         new Trigger(()-> xbox.getPOV()== 90).whileTrue(commandGroups.getPathDriveTestCommand());
         new Trigger(()-> xbox.getPOV()== 180).whileTrue(commandGroups.getPathTurnTestCommand());
         //new Trigger(() - > xbox.getPOV() == 270))
+
     }
 
 

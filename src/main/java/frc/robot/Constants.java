@@ -75,10 +75,10 @@ public class Constants {
     }
 
     public static class Climb {
-        public static final int cClimber = 17;
+        public static final int cClimber = 15;
         public static final double cDownPos = 0;
         public static final double cUpPos = 1;
-        public static final double cConfigMultiplier = ((1.0 / 25.0) * (1.124 + 0.25) * Math.PI) / 10.875;
+        public static final double cConfigMultiplier = ((1.0 / 45.0) * (1.124 + 0.25) * Math.PI) / 10.875;
     }
 
     public static class Vision {
