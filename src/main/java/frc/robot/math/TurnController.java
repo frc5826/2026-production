@@ -17,7 +17,7 @@ public class TurnController implements NTSendable {
     private double angleGoal;
 
     public TurnController(double v, double s, double maxVelocity, double maxAcceleration, double p, double i, double d, DoubleSupplier currentAngle) {
-        this.pid = new PID(p, i, d, 1, -1, 0.01, () -> angleDifference(currentAngle.getAsDouble(), angleGoal)-setpoint.position);
+        this.pid = new PID(p, i, d, 1, -1, 0, () -> angleDifference(angleGoal, currentAngle.getAsDouble())-setpoint.position);
         this.v = v;
         this.s = s;
         this.currentAngle = currentAngle;
@@ -30,7 +30,7 @@ public class TurnController implements NTSendable {
     }
 
     public void setGoal(double angleGoal, double startVelocity) {
-        double startPoint = angleDifference(currentAngle.getAsDouble(), angleGoal);
+        double startPoint = angleDifference(angleGoal, currentAngle.getAsDouble());
         this.angleGoal = angleGoal;
         goal = new TrapezoidProfile.State(0, 0);
         setpoint = new TrapezoidProfile.State(startPoint, startVelocity);

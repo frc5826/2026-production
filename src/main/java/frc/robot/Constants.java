@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class Constants {
 
@@ -11,18 +12,19 @@ public class Constants {
         //TODO
         public static final PathConstraints cSlowPath = new PathConstraints(
                 1,
-                1,
-                1,
-                1
+                1.5,
+                3,
+                6
         );
         public static final PathConstraints cFastPath = new PathConstraints(
-                1,
-                1,
-                1,
-                1
+                4,
+                6,
+                6,
+                12
         );
-        public static final PIDConstants cPathDrivePID = new PIDConstants(0,0,0);
-        public static final PIDConstants cPathTurnPID = new PIDConstants(0,0,0);
+        public static final PIDConstants cPathDrivePID = new PIDConstants(0.8,0,0);
+        public static final PIDConstants cPathTurnPID = new PIDConstants(4,0,0);
+        public static final ChassisSpeeds cStopped = new ChassisSpeeds();
     }
 
     public static class Shooter {
