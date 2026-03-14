@@ -27,7 +27,7 @@ public class ClimbSubsystem extends LoggedSubsystem {
                 .apply(new EncoderConfig().positionConversionFactor(cConfigMultiplier))
                 .apply(new ClosedLoopConfig().pid(5, 0, 0).outputRange(-0.5,1));
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
+        zeroClimb();
     }
 
     @Override
@@ -42,8 +42,13 @@ public class ClimbSubsystem extends LoggedSubsystem {
 
         }else
             motor.getClosedLoopController().setSetpoint(cDownPos, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, -6);
+    }
 
-
+    public void hookStow() {
+        if(motor.getEncoder().getPosition()<=cStowPos*3/4){
+            motor.getClosedLoopController().setSetpoint(cStowPos, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, 0);
+        }else
+            motor.getClosedLoopController().setSetpoint(cStowPos, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, -6);
     }
 
     public void hookUp() {
@@ -61,6 +66,11 @@ public class ClimbSubsystem extends LoggedSubsystem {
 
     public Command downCommand () {
         Command c = new RunCommand(this::hookUp, this);
+        return LoggedCommand.logCommand(c, "Down Command");
+    }
+
+    public Command stowCommand () {
+        Command c = new RunCommand(this::hookStow, this);
         return LoggedCommand.logCommand(c, "Down Command");
     }
 }

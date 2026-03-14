@@ -12,7 +12,7 @@ public class Constants {
         //TODO
         public static final PathConstraints cSlowPath = new PathConstraints(
                 1,
-                1.5,
+                2,
                 3,
                 6
         );
@@ -22,7 +22,7 @@ public class Constants {
                 6,
                 12
         );
-        public static final PIDConstants cPathDrivePID = new PIDConstants(0.8,0,0);
+        public static final PIDConstants cPathDrivePID = new PIDConstants(1,0,0);
         public static final PIDConstants cPathTurnPID = new PIDConstants(4,0,0);
         public static final ChassisSpeeds cStopped = new ChassisSpeeds();
     }
@@ -51,7 +51,7 @@ public class Constants {
 
     public static class Intake {
         public static final int cMotorIDIntake1 = 5;
-        public static final double cArmMotorSpeed = 0.2;
+        public static final double cArmMotorSpeed = 0.4;
         public static final double cShakeSpeed = 1.5;
         public static final int cArmMotor = 7;
         public static final int cArmMotorFollower = 6;
@@ -76,8 +76,9 @@ public class Constants {
 
     public static class Climb {
         public static final int cClimber = 15;
-        public static final double cDownPos = 0;
-        public static final double cUpPos = 1;
+        public static final double cDownPos = -1;
+        public static final double cStowPos = -1.3;
+        public static final double cUpPos = 0;
         public static final double cConfigMultiplier = ((1.0 / 45.0) * (1.124 + 0.25) * Math.PI) / 10.875;
     }
 

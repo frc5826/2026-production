@@ -68,7 +68,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
         setupPathPlanner();
 
         gyro = (AHRS) swerveDrive.getGyro().getIMU();
-        turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 1, 0, 0, () -> getPose().getRotation().getRadians());
+        turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 0.7, 0, 0, () -> getPose().getRotation().getRadians());
 
         SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
         SmartDashboard.putData("5826/swerve/field", swerveDrive.field);
@@ -99,14 +99,13 @@ public class SwerveSubsystem extends LoggedSubsystem {
     }
 
     public void addVisionMeasurement(Pose2d robotPos, double timestamp, Matrix<N3, N1> stdDevs) {
-        if (robotPos.getTranslation().getDistance(getPose().getTranslation()) < 1) {
+        if (DriverStation.isDisabled()) {
+            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.1, 0.1, 1));
+
+        } else if (robotPos.getTranslation().getDistance(getPose().getTranslation()) < 1) {
             swerveDrive.addVisionMeasurement(robotPos, timestamp, stdDevs);
 
-        } else if (DriverStation.isDisabled()) {
-            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.05, 0.05, 0.5));
-
         }
-
     }
 
     public void setTurnGoal(Rotation2d targetAngle) {

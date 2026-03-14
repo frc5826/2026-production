@@ -45,6 +45,8 @@ public class Locations {
 
     }
 
+
+
     public static Rectangle2d getLeftAllianceZone() {
 
         Translation2d cornerA = new Translation2d(0, 4);
@@ -87,6 +89,22 @@ public class Locations {
 
         return new Rectangle2d(flip(cornerA), flip(cornerB));
 
+    }
+
+    public static Rectangle2d getLeftAutoZone() {
+
+        Translation2d cornerA = new Translation2d(0, 8);
+        Translation2d cornerB = new Translation2d(8.249, 4);
+
+        return new Rectangle2d(flip(cornerA), flip(cornerB));
+    }
+
+    public static Rectangle2d getRightAutoZone() {
+
+        Translation2d cornerA = new Translation2d(0, 4);
+        Translation2d cornerB = new Translation2d(8.249, 0);
+
+        return new Rectangle2d(flip(cornerA), flip(cornerB));
     }
 
     public static Pose2d move(Pose2d pose, double x, double y){

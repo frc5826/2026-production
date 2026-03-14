@@ -52,7 +52,7 @@ public class RobotContainer {
         }
         UsbCamera driverView = CameraServer.startAutomaticCapture();
         driverView.setFPS(7);
-        driverView.setExposureManual(20);
+        driverView.setExposureManual(8);
         driverView.setBrightness(35);
         driverView.setResolution(400,300);
         SignalLogger.enableAutoLogging(false);
@@ -79,8 +79,8 @@ public class RobotContainer {
 
         /* A B X Y */
         new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
-        new Trigger(()-> xbox.getBButton()).onTrue(climb.downCommand());
-        new Trigger(()-> xbox.getYButton()).onTrue(climb.climbCommand());
+        new Trigger(()-> xbox.getBButton()).whileTrue(PathToFromMid.get(swerve));
+        new Trigger(()-> xbox.getYButton()).onTrue(commandGroups.getPathTurnTestCommand());
         new Trigger(() -> xbox.getXButton()).onTrue(commandGroups.getDejammerCommand());
 
         /* Menu Buttons */
@@ -88,9 +88,9 @@ public class RobotContainer {
         new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
 
         /* D - Pad */
-        new Trigger(()-> xbox.getPOV()==0).whileTrue(intake.shakeIntakeCommand());
-        new Trigger(()-> xbox.getPOV()== 90).whileTrue(commandGroups.getPathDriveTestCommand());
-        new Trigger(()-> xbox.getPOV()== 180).whileTrue(commandGroups.getPathTurnTestCommand());
+//        new Trigger(()-> xbox.getPOV()==0).whileTrue(climb.downCommand());
+//        new Trigger(()-> xbox.getPOV()== 90).whileTrue(climb.climbCommand());
+//        new Trigger(()-> xbox.getPOV()== 180).whileTrue(climb.stowCommand());
         //new Trigger(() - > xbox.getPOV() == 270))
 
     }

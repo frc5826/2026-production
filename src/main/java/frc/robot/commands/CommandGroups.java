@@ -64,7 +64,7 @@ public class CommandGroups {
         if (autoChooser.getSelected().equals("empty")) {
             return init;
         } else if (autoChooser.getSelected().equals("shootOnly")) {
-            return init.andThen(moveCommand(-2, 0,cSlowPath,0)).andThen(getShootGroup());
+            return init.andThen(moveCommand(-2, 0, cSlowPath, 0)).andThen(getShootGroup());
 
         } else if (autoChooser.getSelected().equals("depotGrab+Shoot")) {
             return init.alongWith(intake.getIntakeCommand(), getPathCommand("toDepotCommand"))
@@ -78,12 +78,7 @@ public class CommandGroups {
                     .andThen(getShootGroup());
 
         } else if (autoChooser.getSelected().equals("runOutToMiddle+Shoot")) {
-            if (Locations.getLeftAllianceZone().contains(swerve.getPose().getTranslation()))
-                return getInteyor().alongWith(getPathCommand("toMiddleFromLeftPath").andThen(getShootGroup()));
-            else if (Locations.getRightAllianceZone().contains(swerve.getPose().getTranslation())) {
-                return getInteyor().alongWith(getPathCommand("toMiddleFromRightPath").andThen(getShootGroup()));
-            }
-
+            return init.alongWith(getMidAuto()).andThen(getMidAuto());
         }
         return init;
     }
@@ -100,17 +95,38 @@ public class CommandGroups {
         return new InstantCommand();
     }
 
+    public Command getMidAuto() {
+        try {
+            if (Locations.getLeftAutoZone().contains(swerve.getPose().getTranslation())) {
+                return (getPathCommand("midFromLeftAuto"))
+                        .andThen(getPathCommand("leftFromMidAuto")).deadlineFor(intake.getIntakeCommand())
+                        .andThen(getShootGroup().withTimeout(4))
+                        .andThen(gotoCommand(
+                                PathPlannerPath.fromPathFile("midFromLeftAuto")
+                                        .getStartingHolonomicPose().get()
+                                ,cSlowPath,0));
+            } else if (Locations.getRightAutoZone().contains(swerve.getPose().getTranslation())) {
+                return (getPathCommand("midFromRightAuto"))
+                        .andThen(getPathCommand("rightFromMidAuto")).deadlineFor(intake.getIntakeCommand())
+                        .andThen(getShootGroup());
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return new InstantCommand();
+    }
+
     public Command getPathDriveTestCommand() {
-        return moveCommand(1, 0, cSlowPath,0).andThen(
-                moveCommand(0,1,cSlowPath,0),
-                moveCommand(-1,0,cSlowPath,0),
-                moveCommand(0,-1,cSlowPath,0)
+        return moveCommand(1.5, 0, cSlowPath, 0).andThen(
+                moveCommand(0, 1.5, cSlowPath, 0),
+                moveCommand(-1.5, 0, cSlowPath, 0),
+                moveCommand(0, -1.5, cSlowPath, 0)
         );
     }
 
     public Command getPathTurnTestCommand() {
-        return gotoCommand(new Pose2d(14,2, Rotation2d.kZero),cSlowPath,1)
-                .andThen(gotoCommand(new Pose2d(14,4,Rotation2d.k180deg),cSlowPath,0));
+        return gotoCommand(new Pose2d(14, 2, Rotation2d.kZero), cSlowPath, 1)
+                .andThen(gotoCommand(new Pose2d(14, 4, Rotation2d.k180deg), cSlowPath, 0));
     }
 
     public Command getShootGroup() {
@@ -140,14 +156,17 @@ public class CommandGroups {
         return conveyor.getConveyorCommand().alongWith(index.getIndexCommand().alongWith(intake.getIntakeCommand()));
     }
 
-    public Command getDejammerCommand(){
+    public Command getDejammerCommand() {
         return intake.getReverseIntakeCommand().alongWith(conveyor.getReverseConveyorCommand()).withTimeout(1);
     }
 
-    public Command gotoCommand(Pose2d endPose, PathConstraints constraints, double endSpeed){
+    public Command gotoCommand(Pose2d endPose, PathConstraints constraints, double endSpeed) {
         Command c = new Command() {
             Command pathCommand;
-            {addRequirements(swerve);}
+
+            {
+                addRequirements(swerve);
+            }
 
             @Override
             public void initialize() {
@@ -185,10 +204,13 @@ public class CommandGroups {
         return LoggedCommand.logCommand(c, "Drive to " + endPose);
     }
 
-    public Command moveCommand(double x, double y, PathConstraints constraints, double endSpeed){
+    public Command moveCommand(double x, double y, PathConstraints constraints, double endSpeed) {
         Command c = new Command() {
             Command pathCommand;
-            {addRequirements(swerve);}
+
+            {
+                addRequirements(swerve);
+            }
 
             @Override
             public void initialize() {
@@ -224,7 +246,7 @@ public class CommandGroups {
                 return pathCommand.isFinished();
             }
         };
-        return LoggedCommand.logCommand(c, "move +("+x+","+y+")");
+        return LoggedCommand.logCommand(c, "move +(" + x + "," + y + ")");
     }
 
 }

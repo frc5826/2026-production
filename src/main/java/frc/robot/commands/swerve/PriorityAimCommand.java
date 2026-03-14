@@ -33,7 +33,6 @@ public class PriorityAimCommand extends LoggedCommand {
             rotation2d = Locations.getRightSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
             swerveSubsystem.setTurnGoal(rotation2d);
         }
-        SmartDashboard.putNumber("angle", rotation2d.getDegrees());
     }
 
     @Override
