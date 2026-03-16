@@ -18,7 +18,7 @@ import static frc.robot.Constants.Climb.*;
 public class ClimbSubsystem extends LoggedSubsystem {
 
     private SparkMax motor;
-
+    private double lastPos;
 
     public ClimbSubsystem (){
 
@@ -28,6 +28,7 @@ public class ClimbSubsystem extends LoggedSubsystem {
                 .apply(new ClosedLoopConfig().pid(5, 0, 0).outputRange(-0.5,1));
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         zeroClimb();
+        SmartDashboard.putData("5826/climb/zeroClimber", zeroCommand());
     }
 
     @Override
@@ -72,6 +73,13 @@ public class ClimbSubsystem extends LoggedSubsystem {
     public Command stowCommand () {
         Command c = new RunCommand(this::hookStow, this);
         return LoggedCommand.logCommand(c, "Down Command");
+    }
+
+    public Command zeroCommand() {
+        return new RunCommand(() -> {
+            motor.set(-0.2);
+        }, this)
+                .finallyDo(()-> zeroClimb());
     }
 }
 

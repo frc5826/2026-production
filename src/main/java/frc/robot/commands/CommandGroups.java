@@ -31,7 +31,9 @@ public class CommandGroups {
             "shootOnly",
             "depotGrab+Shoot",
             "humanPlayerGrab+Shoot",
-            "runOutToMiddle+Shoot"
+            "runOutToMiddle+Shoot",
+            "middleShootHumanShoot",
+            "middleShootClimb"
     };
     private SendableChooser<String> autoChooser = new SendableChooser<>();
 
@@ -78,7 +80,19 @@ public class CommandGroups {
                     .andThen(getShootGroup());
 
         } else if (autoChooser.getSelected().equals("runOutToMiddle+Shoot")) {
-            return init.alongWith(getMidAuto()).andThen(getMidAuto());
+            return init.alongWith(getMidAuto());
+        } else if (autoChooser.getSelected().equals("middleShootHumanShoot")) {
+            return init.alongWith((getPathCommand("midFromRightAuto"))
+                    .andThen(getPathCommand("rightFromMidAuto")).alongWith(shoot.getShootCommand(3100)))
+                    .andThen(getShootGroup().withTimeout(4))
+                    .andThen(getPathCommand("humanFromRightAuto")).deadlineFor(intake.getIntakeCommand())
+                    .andThen(getShootGroup().withTimeout(4));
+        } else if (autoChooser.getSelected().equals("middleShootClimb")) {
+            return init.alongWith((getPathCommand("midFromLeftAuto"))
+                            .andThen(getPathCommand("leftFromMidAuto")).alongWith(shoot.getShootCommand(3100)).deadlineFor(intake.getIntakeCommand()))
+                    .andThen(getShootGroup().withTimeout(4))
+                    .andThen(getPathCommand("climbLeft"))
+                    .andThen(climb.climbCommand());
         }
         return init;
     }
@@ -99,7 +113,7 @@ public class CommandGroups {
         try {
             if (Locations.getLeftAutoZone().contains(swerve.getPose().getTranslation())) {
                 return (getPathCommand("midFromLeftAuto"))
-                        .andThen(getPathCommand("leftFromMidAuto")).deadlineFor(intake.getIntakeCommand())
+                        .andThen(getPathCommand("leftFromMidAuto").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
                         .andThen(getShootGroup().withTimeout(4))
                         .andThen(gotoCommand(
                                 PathPlannerPath.fromPathFile("midFromLeftAuto")
@@ -107,8 +121,12 @@ public class CommandGroups {
                                 ,cSlowPath,0));
             } else if (Locations.getRightAutoZone().contains(swerve.getPose().getTranslation())) {
                 return (getPathCommand("midFromRightAuto"))
-                        .andThen(getPathCommand("rightFromMidAuto")).deadlineFor(intake.getIntakeCommand())
-                        .andThen(getShootGroup());
+                        .andThen(getPathCommand("rightFromMidAuto")).alongWith(shoot.getShootCommand(3100)).deadlineFor(intake.getIntakeCommand())
+                        .andThen(getShootGroup().withTimeout(4))
+                        .andThen(gotoCommand(
+                        PathPlannerPath.fromPathFile("midFromRightAuto")
+                                .getStartingHolonomicPose().get()
+                        ,cSlowPath,0));
             }
         } catch (Exception e){
             e.printStackTrace();

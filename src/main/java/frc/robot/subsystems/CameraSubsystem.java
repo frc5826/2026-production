@@ -36,11 +36,11 @@ public class CameraSubsystem extends SubsystemBase {
 
         this.odometry = odometry;
         cameras.add(
-                new Camera("Arducam_2", new Translation3d(0.285, 0.235, 0.30), new Rotation3d(0, Math.toRadians(-30), Math.toRadians(90))));
+                new Camera("Arducam_2", new Translation3d(0.29, 0.235, 0.325), new Rotation3d(0, -Math.toRadians(30), Math.toRadians(90))));
         cameras.add(
-                new Camera("Arducam_1", new Translation3d(0.29, -0.24, 0.29), new Rotation3d(0, 0, Math.toRadians(270))));
+                new Camera("Arducam_1", new Translation3d(0.29, -0.235, 0.325), new Rotation3d(0, -Math.toRadians(30), Math.toRadians(270))));
         cameras.add(
-                new Camera("Arducam_3", new Translation3d(0.3225, 0.0025, 0.29), new Rotation3d(0, -Math.toRadians(9), 0)));
+                new Camera("Arducam_3", new Translation3d(0.3225, 0.0025, 0.31), new Rotation3d(0, -Math.toRadians(30), 0)));
     }
 
     private void getCameraValues(Camera camera) {

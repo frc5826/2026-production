@@ -113,7 +113,7 @@ public class ShootSubsystem extends LoggedSubsystem {
         return LoggedCommand.logCommand(c, " Shoot Command");
     }
 
-    private double getRPMFromDistance(double distance) {
+    private static double getRPMFromDistance(double distance) {
         double x = distance + 0.60 + Preferences.getDouble("distanceOffset",0);
         return -102.62602 * Math.pow(x, 4) + 1659.2906 * Math.pow(x, 3) - 9494.24078 * Math.pow(x, 2) + 23465.129 * x - 18598.1388;//todo
     }
@@ -135,5 +135,7 @@ public class ShootSubsystem extends LoggedSubsystem {
         setGoalSpeed(1000);
         stop = true;
     }
+
+
 
 }
