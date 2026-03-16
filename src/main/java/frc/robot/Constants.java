@@ -16,6 +16,12 @@ public class Constants {
                 3,
                 6
         );
+        public static final PathConstraints cMidPath = new PathConstraints(
+                2,
+                3.5,
+                4.5,
+                8
+        );
         public static final PathConstraints cFastPath = new PathConstraints(
                 4,
                 6,
@@ -56,7 +62,7 @@ public class Constants {
         public static final int cArmMotor = 7;
         public static final int cArmMotorFollower = 6;
         public static final double cSpeed = 1;
-        public static final double intakeP = 0.2;
+        public static final double intakeP = 0.05;
         public static final double intakeI = 0;
         public static final double intakeD = 0;
         public static final double intakeFF = 0;
@@ -76,9 +82,9 @@ public class Constants {
 
     public static class Climb {
         public static final int cClimber = 15;
-        public static final double cDownPos = -1;
-        public static final double cStowPos = -1.3;
-        public static final double cUpPos = 0;
+        public static final double cDownPos = 0.3;
+        public static final double cStowPos = 0;
+        public static final double cUpPos = 1.3;
         public static final double cConfigMultiplier = ((1.0 / 45.0) * (1.124 + 0.25) * Math.PI) / 10.875;
     }
 

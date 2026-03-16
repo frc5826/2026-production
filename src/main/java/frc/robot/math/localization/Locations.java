@@ -25,6 +25,33 @@ public class Locations {
         return flip(pose);
     }
 
+    public static Pose2d getLeftAutoStartPos() {
+        Pose2d pose = new Pose2d(4.294, 7.409, Rotation2d.k180deg);
+        return flip(pose);
+    }
+
+    public static Pose2d getRightAutoStartPos() {
+        Pose2d pose = new Pose2d(4.391, 0.628, Rotation2d.k180deg);
+        return flip(pose);
+    }
+
+    public static Pose2d getRightFromMidPose() {
+        Pose2d pose = new Pose2d(3.7, 0.7, Rotation2d.k180deg);
+        return flip(pose);
+    }
+    public static Pose2d getMidFromRightPose() {
+        Pose2d pose = new Pose2d(6, 0.7, Rotation2d.kZero);
+        return flip(pose);
+    }
+    public static Pose2d getLeftFromMidPose() {
+        Pose2d pose = new Pose2d(3.7, 7.2, Rotation2d.k180deg);
+        return flip(pose);
+    }
+    public static Pose2d getMidFromLeftPose() {
+        Pose2d pose = new Pose2d(6, 7.2, Rotation2d.kZero);
+        return flip(pose);
+    }
+
     public static Pose2d getHubPose() {
         //4.625x, 4.035y
         Pose2d pose = new Pose2d(4.625, 4.035, Rotation2d.kZero);

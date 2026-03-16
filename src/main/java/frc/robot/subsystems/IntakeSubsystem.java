@@ -26,7 +26,7 @@ public class IntakeSubsystem extends LoggedSubsystem {
 
     public IntakeSubsystem() {
         intakeMotor = new SparkFlex(cMotorIDIntake1, SparkLowLevel.MotorType.kBrushless);
-        SparkBaseConfig intakeConfig = new SparkFlexConfig().inverted(true).smartCurrentLimit(40);
+        SparkBaseConfig intakeConfig = new SparkFlexConfig().inverted(true).smartCurrentLimit(50);
         intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         armMotor = new SparkMax(cArmMotor, SparkLowLevel.MotorType.kBrushless);
         armMotorFollower = new SparkMax(cArmMotorFollower, SparkLowLevel.MotorType.kBrushless);
@@ -38,15 +38,6 @@ public class IntakeSubsystem extends LoggedSubsystem {
         armMotorFollower.configure(config.follow(armMotor, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 
-    }
-
-
-    public void setIntakePositionDegrees(double angle) {
-        armMotor.getClosedLoopController().setSetpoint(angle, SparkBase.ControlType.kPosition);
-    }
-
-    public void setIntakePositionRadians(double angle) {
-        setIntakePositionDegrees(Math.toDegrees(angle));
     }
 
     @Override
@@ -67,15 +58,6 @@ public class IntakeSubsystem extends LoggedSubsystem {
 
     public void setSpeed(double speed) {
         intakeMotor.set(speed);
-    }
-
-    public Command moveIntake() {
-        Command c = new RunCommand(
-                () -> {
-                    setIntakePositionDegrees(-45);
-                }
-                , armSubsystem);
-        return c;
     }
 
     public Command shakeIntakeCommand() {
@@ -107,16 +89,18 @@ public class IntakeSubsystem extends LoggedSubsystem {
 
 
     public Command intakeDown() {
+//        Command c = new InstantCommand(()-> armMotor.getEncoder().setPosition(0))
+//          .andThen(new RunCommand(() -> {
+//              armMotor.getClosedLoopController().setSetpoint(-160, SparkBase.ControlType.kPosition);
+//          }, armSubsystem).withTimeout(1.3));
+//        return LoggedCommand.logCommand(c, "Intake Down");
 
         Command c = new RunCommand(() -> {
             armMotor.set(cArmMotorSpeed);
-            //  armMotorFollower.set(cArmMotorSpeed);
         }, armSubsystem).withTimeout(1.3)
                 .finallyDo(() -> {
                     armMotor.getClosedLoopController().setSetpoint(0, SparkBase.ControlType.kPosition);
                     armMotor.getEncoder().setPosition(0);
-                    //     armMotorFollower.getClosedLoopController().setSetpoint(0, SparkBase.ControlType.kPosition);
-                    //     armMotorFollower.getEncoder().setPosition(0);
                 });
         return LoggedCommand.logCommand(c, "Intake Down");
     }

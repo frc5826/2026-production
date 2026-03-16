@@ -37,4 +37,19 @@ public class IndexSubsystem extends LoggedSubsystem {
 
     }
 
+    public Command getReverseIndexCommand() {
+
+        Command command = new RunCommand(() -> {
+
+            motor.set(-cIndexerSpeed);
+        }, this).finallyDo(() -> {
+
+            motor.set(0);
+        });
+
+        return LoggedCommand.logCommand(command, "Reverse Index Command");
+
+
+    }
+
 }

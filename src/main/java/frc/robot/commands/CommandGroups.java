@@ -7,12 +7,15 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.swerve.PriorityAimCommand;
 import frc.robot.math.localization.Locations;
 import frc.robot.subsystems.*;
+
+import java.util.function.Supplier;
 
 import static frc.robot.Constants.Swerve.*;
 
@@ -110,27 +113,17 @@ public class CommandGroups {
     }
 
     public Command getMidAuto() {
-        try {
             if (Locations.getLeftAutoZone().contains(swerve.getPose().getTranslation())) {
                 return (getPathCommand("midFromLeftAuto"))
                         .andThen(getPathCommand("leftFromMidAuto").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
-                        .andThen(getShootGroup().withTimeout(4))
-                        .andThen(gotoCommand(
-                                PathPlannerPath.fromPathFile("midFromLeftAuto")
-                                        .getStartingHolonomicPose().get()
-                                ,cSlowPath,0));
+                        .andThen(getShootGroup().withTimeout(10))
+                        .andThen(gotoCommand(() -> Locations.getLeftAutoStartPos(), cSlowPath, 0));
             } else if (Locations.getRightAutoZone().contains(swerve.getPose().getTranslation())) {
                 return (getPathCommand("midFromRightAuto"))
                         .andThen(getPathCommand("rightFromMidAuto")).alongWith(shoot.getShootCommand(3100)).deadlineFor(intake.getIntakeCommand())
-                        .andThen(getShootGroup().withTimeout(4))
-                        .andThen(gotoCommand(
-                        PathPlannerPath.fromPathFile("midFromRightAuto")
-                                .getStartingHolonomicPose().get()
-                        ,cSlowPath,0));
+                        .andThen(getShootGroup().withTimeout(10))
+                        .andThen(gotoCommand(() -> Locations.getRightAutoStartPos(), cSlowPath, 0));
             }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
         return new InstantCommand();
     }
 
@@ -140,11 +133,6 @@ public class CommandGroups {
                 moveCommand(-1.5, 0, cSlowPath, 0),
                 moveCommand(0, -1.5, cSlowPath, 0)
         );
-    }
-
-    public Command getPathTurnTestCommand() {
-        return gotoCommand(new Pose2d(14, 2, Rotation2d.kZero), cSlowPath, 1)
-                .andThen(gotoCommand(new Pose2d(14, 4, Rotation2d.k180deg), cSlowPath, 0));
     }
 
     public Command getShootGroup() {
@@ -175,10 +163,10 @@ public class CommandGroups {
     }
 
     public Command getDejammerCommand() {
-        return intake.getReverseIntakeCommand().alongWith(conveyor.getReverseConveyorCommand()).withTimeout(1);
+        return intake.getReverseIntakeCommand().alongWith(index.getReverseIndexCommand()).alongWith(conveyor.getReverseConveyorCommand()).withTimeout(1);
     }
 
-    public Command gotoCommand(Pose2d endPose, PathConstraints constraints, double endSpeed) {
+    public Command gotoCommand(Supplier<Pose2d> endPose, PathConstraints constraints, double endSpeed) {
         Command c = new Command() {
             Command pathCommand;
 
@@ -190,14 +178,14 @@ public class CommandGroups {
             public void initialize() {
                 var startPose = swerve.getPose();
                 var waypoints = PathPlannerPath.waypointsFromPoses(
-                        new Pose2d(startPose.getX(), startPose.getY(), Locations.angleTo(startPose, endPose)),
-                        new Pose2d(endPose.getX(), endPose.getY(), Locations.angleTo(startPose, endPose))
+                        new Pose2d(startPose.getX(), startPose.getY(), Locations.angleTo(startPose, endPose.get())),
+                        new Pose2d(endPose.get().getX(), endPose.get().getY(), Locations.angleTo(startPose, endPose.get()))
                 );
                 var path = new PathPlannerPath(
                         waypoints,
                         constraints,
                         new IdealStartingState(0, startPose.getRotation()),
-                        new GoalEndState(endSpeed, endPose.getRotation())
+                        new GoalEndState(endSpeed, endPose.get().getRotation())
                 );
                 path.preventFlipping = true;
                 pathCommand = AutoBuilder.followPath(path);

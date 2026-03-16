@@ -20,7 +20,7 @@ public class ConveyorSubsystem extends LoggedSubsystem {
 
         motor = new SparkMax(cOuterIndex, SparkLowLevel.MotorType.kBrushless);
         SparkFlexConfig config = (SparkFlexConfig) new SparkFlexConfig().closedLoopRampRate(0.2)
-                .smartCurrentLimit(40).inverted(false);
+                .smartCurrentLimit(50).inverted(false);
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }

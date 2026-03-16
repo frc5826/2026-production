@@ -28,6 +28,7 @@ public class ClimbSubsystem extends LoggedSubsystem {
                 .apply(new ClosedLoopConfig().pid(5, 0, 0).outputRange(-0.5,1));
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         zeroClimb();
+        hookStow();
         SmartDashboard.putData("5826/climb/zeroClimber", zeroCommand());
     }
 
@@ -38,7 +39,7 @@ public class ClimbSubsystem extends LoggedSubsystem {
     }
 
     public void hookDown() {
-        if(motor.getEncoder().getPosition()<=cDownPos*3/4){
+        if(motor.getEncoder().getPosition()<=cDownPos*1.5){
             motor.getClosedLoopController().setSetpoint(cDownPos, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, 0);
 
         }else
@@ -46,7 +47,7 @@ public class ClimbSubsystem extends LoggedSubsystem {
     }
 
     public void hookStow() {
-        if(motor.getEncoder().getPosition()<=cStowPos*3/4){
+        if(motor.getEncoder().getPosition()<=cDownPos*1.5){
             motor.getClosedLoopController().setSetpoint(cStowPos, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, 0);
         }else
             motor.getClosedLoopController().setSetpoint(cStowPos, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, -6);
@@ -79,7 +80,10 @@ public class ClimbSubsystem extends LoggedSubsystem {
         return new RunCommand(() -> {
             motor.set(-0.2);
         }, this)
-                .finallyDo(()-> zeroClimb());
+                .finallyDo(()-> {
+                    zeroClimb();
+                    hookStow();
+                });
     }
 }
 

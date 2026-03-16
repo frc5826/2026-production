@@ -2,6 +2,7 @@ package frc.robot.commands.swerve;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -30,14 +31,30 @@ public class PathToFromMid extends Command {
     @Override
     public void initialize() {
         super.initialize();
+//        if (Locations.getRightAllianceZone().contains(swerve.getPose().getTranslation())) {
+//            pathCommand = getPathCommand("midFromRight");
+//        } else if (Locations.getLeftAllianceZone().contains(swerve.getPose().getTranslation())) {
+//            pathCommand = getPathCommand("midFromLeft");
+//        } else if (Locations.getLeftSideMidZone().contains(swerve.getPose().getTranslation())) {
+//            pathCommand = getPathCommand("leftFromMid");
+//        } else if (Locations.getRightSideMidZone().contains(swerve.getPose().getTranslation())) {
+//            pathCommand = getPathCommand("rightFromMid");
+//        } else {
+//            pathCommand = new PrintCommand("Invalid Position");
+//        }
+
         if (Locations.getRightAllianceZone().contains(swerve.getPose().getTranslation())) {
-            pathCommand = getPathCommand("midFromRight");
+            pathCommand = AutoBuilder.pathfindToPose(Locations.getMidFromRightPose(),cMidPath);
+            swerve.setTurnGoal(Rotation2d.k180deg);
         } else if (Locations.getLeftAllianceZone().contains(swerve.getPose().getTranslation())) {
-            pathCommand = getPathCommand("midFromLeft");
+            pathCommand = AutoBuilder.pathfindToPose(Locations.getMidFromLeftPose(),cMidPath);
+            swerve.setTurnGoal(Rotation2d.k180deg);
         } else if (Locations.getLeftSideMidZone().contains(swerve.getPose().getTranslation())) {
-            pathCommand = getPathCommand("leftFromMid");
+            pathCommand = AutoBuilder.pathfindToPose(Locations.getLeftFromMidPose(),cMidPath);
+            swerve.setTurnGoal(Rotation2d.kZero);
         } else if (Locations.getRightSideMidZone().contains(swerve.getPose().getTranslation())) {
-            pathCommand = getPathCommand("rightFromMid");
+            pathCommand = AutoBuilder.pathfindToPose(Locations.getRightFromMidPose(),cMidPath);
+            swerve.setTurnGoal(Rotation2d.kZero);
         } else {
             pathCommand = new PrintCommand("Invalid Position");
         }
@@ -59,6 +76,7 @@ public class PathToFromMid extends Command {
     public void end(boolean interrupted) {
         super.end(interrupted);
         pathCommand.end(interrupted);
+        swerve.endTurn();
     }
 
 

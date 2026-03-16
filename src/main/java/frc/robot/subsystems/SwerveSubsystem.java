@@ -73,9 +73,9 @@ public class SwerveSubsystem extends LoggedSubsystem {
         SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
         SmartDashboard.putData("5826/swerve/field", swerveDrive.field);
         SmartDashboard.putData("5826/swerve/turncontroller", turnController);
-        SmartDashboard.putNumber("5826/swerve/ff/ks",swerveDrive.getModules()[0].getDefaultFeedforward().getKs());
-        SmartDashboard.putNumber("5826/swerve/ff/kv",swerveDrive.getModules()[0].getDefaultFeedforward().getKv());
-        SmartDashboard.putNumber("5826/swerve/ff/ka",swerveDrive.getModules()[0].getDefaultFeedforward().getKa());
+        SmartDashboard.putData("5826/swerve/resetAngleEncoders", new InstantCommand(()->swerveDrive.synchronizeModuleEncoders()).ignoringDisable(true));
+
+        swerveDrive.setModuleEncoderAutoSynchronize(true, 3);
     }
 
     @Override
@@ -92,10 +92,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
         drive(speeds, robotOriented);
 
         SmartDashboard.putNumber("5826/shoot/hubdistance", getHubDistance());
-        SmartDashboard.putNumber("5826/swerve/gyroAngle", Rotation2d.fromDegrees(-gyro.getAngle()).plus(gyroOffset).getDegrees());
-        SmartDashboard.putNumber("5826/swerve/turnSpeed", swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
         SmartDashboard.putBoolean("5826/swerve/isAtTurnTarget", isAtTurnTarget());
-
     }
 
     public void addVisionMeasurement(Pose2d robotPos, double timestamp, Matrix<N3, N1> stdDevs) {
