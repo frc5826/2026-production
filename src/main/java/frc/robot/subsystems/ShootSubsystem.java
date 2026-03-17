@@ -32,7 +32,7 @@ public class ShootSubsystem extends LoggedSubsystem {
     private SparkFlex motor2;
     private DigitalInput beamBreak;
     private boolean stop = true;
-    private Timer debouncer;
+    private Timer debouncer, shootBoost;
     private CANrange canRange;
 
 
@@ -41,6 +41,7 @@ public class ShootSubsystem extends LoggedSubsystem {
         controller = new FlywheelController(cV, pid, cS);
         beamBreak = new DigitalInput(0);
         debouncer = new Timer();
+        shootBoost = new Timer();
         canRange = new CANrange(cCANRangeID, cCANBusName);
         var canRangeConfig = new ProximityParamsConfigs().withProximityThreshold(0.5)
                 .withMinSignalStrengthForValidMeasurement(1);
@@ -49,7 +50,7 @@ public class ShootSubsystem extends LoggedSubsystem {
         SmartDashboard.putData("5826/shoot/pid", pid);
         SmartDashboard.putData("5826/shoot/controller", controller);
         SmartDashboard.putData("5826/shoot/beamBreak", beamBreak);
-        Preferences.initDouble("distanceOffset",0);
+        Preferences.initDouble("distanceOffset", 0);
 
         motor1 = new SparkFlex(cMotorIDShooter1, SparkLowLevel.MotorType.kBrushless);
         motor2 = new SparkFlex(cMotorIDShooter2, SparkLowLevel.MotorType.kBrushless);
@@ -70,9 +71,9 @@ public class ShootSubsystem extends LoggedSubsystem {
         SmartDashboard.putBoolean("5826/shoot/isAtGoalSpeed", isAtGoalSpeed());
         SmartDashboard.putBoolean("5826/shoot/canRange", getCANRange());
         if (stop) {
-            motor1.setVoltage(cS+cV*2000);
+            motor1.setVoltage(cS + cV * 2000);
         } else motor1.setVoltage(output);
-        if(getCANRange()){
+        if (getCANRange()) {
             debouncer.restart();
         }
 
@@ -106,16 +107,22 @@ public class ShootSubsystem extends LoggedSubsystem {
     }
 
     public Command getShootCommand(DoubleSupplier distanceSupplier, boolean repeat) {
-        Command c = new RunCommand(() -> {
-            stop = false;
-            setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()));
-        }, this).until(() -> !repeat && isAtGoalSpeed());
+        Command c = new InstantCommand(() -> shootBoost.restart()).andThen(
+                new RunCommand(() -> {
+                    stop = false;
+                    if (shootBoost.get() < 1) {
+                        setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()) * 1.05);
+                    } else {
+                        setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()));
+                    }
+                }, this)).until(() -> !repeat && isAtGoalSpeed());
         return LoggedCommand.logCommand(c, " Shoot Command");
     }
 
     private static double getRPMFromDistance(double distance) {
-        double x = distance + 0.60 + Preferences.getDouble("distanceOffset",0);
-        return -102.62602 * Math.pow(x, 4) + 1659.2906 * Math.pow(x, 3) - 9494.24078 * Math.pow(x, 2) + 23465.129 * x - 18598.1388;//todo
+        double x = distance + Preferences.getDouble("distanceOffset", 0);
+        return (-448.93378 * Math.pow(distance, 4)) + (5802.46914 * Math.pow(distance, 3)) - (27717.1717 * Math.pow(distance, 2)) + (58471.7172 * distance) - 43400;
+        //y=-448.93378x^{4}+5802.46914x^{3}-27717.1717x^{2}+58471.7172x-43400
     }
 
     public void setGoalDistance(double distance) {
@@ -133,9 +140,10 @@ public class ShootSubsystem extends LoggedSubsystem {
 
     public void stopShoot() {
         setGoalSpeed(1000);
+        shootBoost.stop();
+        shootBoost.reset();
         stop = true;
     }
-
 
 
 }

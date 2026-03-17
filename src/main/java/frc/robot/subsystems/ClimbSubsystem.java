@@ -9,7 +9,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.LoggedCommand;
 
@@ -61,12 +60,12 @@ public class ClimbSubsystem extends LoggedSubsystem {
         motor.getEncoder().setPosition(0);
     }
 
-    public Command climbCommand () {
+    public Command hookDownCommand() {
         Command c = new RunCommand(this::hookDown,this);
         return LoggedCommand.logCommand(c,"Climb Command");
     }
 
-    public Command downCommand () {
+    public Command hookUpCommand() {
         Command c = new RunCommand(this::hookUp, this);
         return LoggedCommand.logCommand(c, "Down Command");
     }

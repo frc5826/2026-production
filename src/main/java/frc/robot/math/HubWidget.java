@@ -9,7 +9,16 @@ import static frc.robot.Constants.cHubBuffer;
 
 public class HubWidget implements Sendable {
 
-    double counter;
+    String[] ColorCodes = new String[2];
+    String AUTONOMOUS = "AUTONOMOUS";
+    String TRANSITION = "TRANSITION";
+    String FIRST_SHIFT = "1st SHIFT";
+    String SECOND_SHIFT = "2nd SHIFT";
+    String THIRD_SHIFT = "3rd SHIFT";
+    String FOURTH_SHIFT = "4th SHIFT";
+    String END_GAME = "END GAME";
+
+
 
     public HubState getHubState() {
         double matchTime = DriverStation.getMatchTime();
@@ -50,28 +59,48 @@ public class HubWidget implements Sendable {
         return HubState.UNKNOWN;
     }
 
-    public Color getColor(HubState state) {
-        return switch (state) {
-            case ACTIVE -> Color.kGreen;
-            case INACTIVE -> Color.kRed;
-            case UNKNOWN -> Color.kOrange;
+    public String getShift() {
+        if(DriverStation.isAutonomous())
+            return AUTONOMOUS;
+        double matchTime = DriverStation.getMatchTime();
+        if(matchTime <= 30) {
+            return END_GAME;
+        } else if (matchTime <= 55) {
+            return FOURTH_SHIFT;
+        } else if (matchTime <= 80) {
+            return THIRD_SHIFT;
+        } else if (matchTime <= 105) {
+            return SECOND_SHIFT;
+        } else if (matchTime <= 120) {
+            return FIRST_SHIFT;
+        } else
+            return TRANSITION;
+    }
+
+    public String[] getColor(HubState state) {
+        switch (state) {
+            case ACTIVE -> {
+                ColorCodes[0] = Color.kGreen.toHexString();
+                ColorCodes[1] = Color.kGreen.toHexString();
+            }
+            case INACTIVE -> {
+                ColorCodes[0] = Color.kRed.toHexString();
+                ColorCodes[1] = Color.kRed.toHexString();
+            }
+            case UNKNOWN -> {
+                ColorCodes[0] = Color.kOrange.toHexString();
+                ColorCodes[1] = Color.kOrange.toHexString();
+            }
             case CHANGING_TO_ACTIVE -> {
-                if (counter++ > 10) {
-                    yield Color.kGreen;
-                } else if (counter > 20) {
-                    counter = 0;
-                }
-                yield Color.kYellow;
+                ColorCodes[0] = Color.kRed.toHexString();
+                ColorCodes[1] = Color.kGreen.toHexString();
             }
             case CHANGING_TO_INACTIVE -> {
-                if (counter++ > 10) {
-                    yield Color.kRed;
-                } else if (counter > 20) {
-                    counter = 0;
-                }
-                yield Color.kYellow;
+                ColorCodes[0] = Color.kGreen.toHexString();
+                ColorCodes[1] = Color.kRed.toHexString();
             }
-        };
+        }
+        return ColorCodes;
     }
 
     public enum HubState {
@@ -85,7 +114,9 @@ public class HubWidget implements Sendable {
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Color");
-        builder.addStringProperty("Color", ()-> getColor(getHubState()).toHexString(),null);
+        builder.addStringArrayProperty("Color", ()-> getColor(getHubState()),null);
+        builder.addStringProperty("Shift", ()-> getShift(), null);
+        builder.addDoubleProperty("Match Time", ()-> DriverStation.getMatchTime(), null);
 
     }
 

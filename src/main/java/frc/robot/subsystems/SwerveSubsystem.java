@@ -99,7 +99,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
         if (DriverStation.isDisabled()) {
             swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.1, 0.1, 1));
 
-        } else if (robotPos.getTranslation().getDistance(getPose().getTranslation()) < 1) {
+        } else if (robotPos.getTranslation().getDistance(getPose().getTranslation()) < 3) {
             swerveDrive.addVisionMeasurement(robotPos, timestamp, stdDevs);
 
         }

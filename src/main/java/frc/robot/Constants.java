@@ -29,7 +29,7 @@ public class Constants {
                 12
         );
         public static final PIDConstants cPathDrivePID = new PIDConstants(1,0,0);
-        public static final PIDConstants cPathTurnPID = new PIDConstants(4,0,0);
+        public static final PIDConstants cPathTurnPID = new PIDConstants(3,0,0);
         public static final ChassisSpeeds cStopped = new ChassisSpeeds();
     }
 

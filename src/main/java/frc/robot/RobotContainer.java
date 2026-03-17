@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CommandGroups;
@@ -26,7 +25,6 @@ import frc.robot.math.HubWidget;
 import frc.robot.subsystems.*;
 
 import java.io.File;
-import java.sql.Driver;
 
 
 public class RobotContainer {
@@ -82,7 +80,7 @@ public class RobotContainer {
         /* A B X Y */
         new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
         new Trigger(()-> xbox.getBButton()).whileTrue(PathToFromMid.get(swerve));
-//        new Trigger(()-> xbox.getYButton()).onTrue();
+        new Trigger(()-> xbox.getYButton()).whileTrue(commandGroups.getPathCommand("ClimbLeft"));
         new Trigger(() -> xbox.getXButton()).onTrue(commandGroups.getDejammerCommand());
 
         /* Menu Buttons */
@@ -90,8 +88,8 @@ public class RobotContainer {
         new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
 
         /* D - Pad */
-        new Trigger(()-> xbox.getPOV()==0).whileTrue(climb.downCommand());
-        new Trigger(()-> xbox.getPOV()== 90).whileTrue(climb.climbCommand());
+        new Trigger(()-> xbox.getPOV()==0).whileTrue(climb.hookUpCommand());
+        new Trigger(()-> xbox.getPOV()== 90).whileTrue(climb.hookDownCommand());
         new Trigger(()-> xbox.getPOV()== 180).whileTrue(climb.stowCommand());
         //new Trigger(() - > xbox.getPOV() == 270))
 

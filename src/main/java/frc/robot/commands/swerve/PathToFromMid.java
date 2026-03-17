@@ -44,16 +44,16 @@ public class PathToFromMid extends Command {
 //        }
 
         if (Locations.getRightAllianceZone().contains(swerve.getPose().getTranslation())) {
-            pathCommand = AutoBuilder.pathfindToPose(Locations.getMidFromRightPose(),cMidPath);
+            pathCommand = AutoBuilder.pathfindToPose(Locations.getMidFromRightPose(),cSlowPath);
             swerve.setTurnGoal(Rotation2d.k180deg);
         } else if (Locations.getLeftAllianceZone().contains(swerve.getPose().getTranslation())) {
-            pathCommand = AutoBuilder.pathfindToPose(Locations.getMidFromLeftPose(),cMidPath);
+            pathCommand = AutoBuilder.pathfindToPose(Locations.getMidFromLeftPose(),cSlowPath);
             swerve.setTurnGoal(Rotation2d.k180deg);
         } else if (Locations.getLeftSideMidZone().contains(swerve.getPose().getTranslation())) {
-            pathCommand = AutoBuilder.pathfindToPose(Locations.getLeftFromMidPose(),cMidPath);
+            pathCommand = AutoBuilder.pathfindToPose(Locations.getLeftFromMidPose(),cSlowPath);
             swerve.setTurnGoal(Rotation2d.kZero);
         } else if (Locations.getRightSideMidZone().contains(swerve.getPose().getTranslation())) {
-            pathCommand = AutoBuilder.pathfindToPose(Locations.getRightFromMidPose(),cMidPath);
+            pathCommand = AutoBuilder.pathfindToPose(Locations.getRightFromMidPose(),cSlowPath);
             swerve.setTurnGoal(Rotation2d.kZero);
         } else {
             pathCommand = new PrintCommand("Invalid Position");

@@ -10,6 +10,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class PriorityAimCommand extends LoggedCommand {
 
     private SwerveSubsystem swerveSubsystem;
+    private Rotation2d rotation2d = Rotation2d.kZero;
 
     public PriorityAimCommand(SwerveSubsystem swerveSubsystem) {
 
@@ -21,7 +22,6 @@ public class PriorityAimCommand extends LoggedCommand {
     public void initialize() {
         super.initialize();
         Pose2d robotPose = swerveSubsystem.getPose();
-        Rotation2d rotation2d = Rotation2d.kZero;
 
         if (Locations.getAllianceZone().contains(robotPose.getTranslation())) {
             rotation2d = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
@@ -37,25 +37,23 @@ public class PriorityAimCommand extends LoggedCommand {
 
     @Override
     public void execute() {
-//        super.execute();
-//        SmartDashboard.putBoolean("5826/priorityaim/isFinished", isFinished());
-//
-//        Pose2d robotPose = swerveSubsystem.getPose();
-//        Rotation2d rotation2d = Rotation2d.kZero;
-//
-//        if (Locations.getAllianceZonePose().contains(robotPose.getTranslation())) {
-//            rotation2d = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
-//            swerveSubsystem.setTurnGoal(rotation2d);
-//        } else if (Locations.getLeftSideMidPose().contains(robotPose.getTranslation())) {
-//            rotation2d = Locations.getLeftSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
-//            swerveSubsystem.setTurnGoal(rotation2d);
-//        } else if (Locations.getRightSideMidPose().contains(robotPose.getTranslation())) {
-//            rotation2d = Locations.getRightSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
-//            swerveSubsystem.setTurnGoal(rotation2d);
-//
-//            SmartDashboard.putNumber("angle", rotation2d.getDegrees());
-//        }
+        super.execute();
+        Pose2d robotPose = swerveSubsystem.getPose();
+        Rotation2d rotation2dNew;
 
+        if (Locations.getAllianceZone().contains(robotPose.getTranslation())) {
+            rotation2dNew = Locations.getHubPose().getTranslation().minus(robotPose.getTranslation()).getAngle();
+        } else if (Locations.getLeftSideMidZone().contains(robotPose.getTranslation())) {
+            rotation2dNew = Locations.getLeftSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
+        } else if (Locations.getRightSideMidZone().contains(robotPose.getTranslation())) {
+            rotation2dNew = Locations.getRightSideTarget().getTranslation().minus(robotPose.getTranslation()).getAngle();
+        } else
+            return;
+
+        if(Math.abs(rotation2dNew.minus(rotation2d).getDegrees()) > 3){
+            rotation2d = rotation2dNew;
+            swerveSubsystem.setTurnGoal(rotation2d);
+        }
     }
 
     @Override
