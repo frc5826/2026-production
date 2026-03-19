@@ -60,14 +60,14 @@ public class Locations {
 
     public static Pose2d getLeftSideTarget() {
 
-        Pose2d pose = new Pose2d(4.625, 6.075, Rotation2d.kZero);
+        Pose2d pose = new Pose2d(1.376, 7.219, Rotation2d.kZero);
         return flip(pose);
 
     }
 
     public static Pose2d getRightSideTarget() {
 
-        Pose2d pose = new Pose2d(4.625, 2.025, Rotation2d.kZero);
+        Pose2d pose = new Pose2d(1.376, 0.714, Rotation2d.kZero);
         return flip(pose);
 
     }

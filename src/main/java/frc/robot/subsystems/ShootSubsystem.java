@@ -64,6 +64,10 @@ public class ShootSubsystem extends LoggedSubsystem {
         return canRange.getIsDetected().getValue();
     }
 
+    public boolean getNotCANRange() {
+        return !canRange.getIsDetected().getValue();
+    }
+
     @Override
     public void periodic() {
         double output = controller.calculate();

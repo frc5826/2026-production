@@ -91,7 +91,7 @@ public class RobotContainer {
         new Trigger(()-> xbox.getPOV()==0).whileTrue(climb.hookUpCommand());
         new Trigger(()-> xbox.getPOV()== 90).whileTrue(climb.hookDownCommand());
         new Trigger(()-> xbox.getPOV()== 180).whileTrue(climb.stowCommand());
-        //new Trigger(() - > xbox.getPOV() == 270))
+        new Trigger(()-> xbox.getPOV()== 270).whileTrue(climb.manualDownCommand());
 
     }
 

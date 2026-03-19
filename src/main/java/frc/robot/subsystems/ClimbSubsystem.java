@@ -60,6 +60,10 @@ public class ClimbSubsystem extends LoggedSubsystem {
         motor.getEncoder().setPosition(0);
     }
 
+    public void motorDown () {
+        motor.set(-0.05);
+    }
+
     public Command hookDownCommand() {
         Command c = new RunCommand(this::hookDown,this);
         return LoggedCommand.logCommand(c,"Climb Command");
@@ -73,6 +77,11 @@ public class ClimbSubsystem extends LoggedSubsystem {
     public Command stowCommand () {
         Command c = new RunCommand(this::hookStow, this);
         return LoggedCommand.logCommand(c, "Down Command");
+    }
+
+    public Command manualDownCommand () {
+        Command c = new RunCommand(this::motorDown, this);
+        return LoggedCommand.logCommand(c, "Manual Down Command");
     }
 
     public Command zeroCommand() {
