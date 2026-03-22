@@ -71,7 +71,7 @@ public class ClimbSubsystem extends LoggedSubsystem {
 
     public Command hookUpCommand() {
         Command c = new RunCommand(this::hookUp, this);
-        return LoggedCommand.logCommand(c, "Down Command");
+        return LoggedCommand.logCommand(c, "Up Command");
     }
 
     public Command stowCommand () {

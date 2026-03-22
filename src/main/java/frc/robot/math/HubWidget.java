@@ -71,7 +71,7 @@ public class HubWidget implements Sendable {
             return THIRD_SHIFT;
         } else if (matchTime <= 105) {
             return SECOND_SHIFT;
-        } else if (matchTime <= 120) {
+        } else if (matchTime <= 130) {
             return FIRST_SHIFT;
         } else
             return TRANSITION;
@@ -116,7 +116,7 @@ public class HubWidget implements Sendable {
         builder.setSmartDashboardType("Color");
         builder.addStringArrayProperty("Color", ()-> getColor(getHubState()),null);
         builder.addStringProperty("Shift", ()-> getShift(), null);
-        builder.addDoubleProperty("Match Time", ()-> DriverStation.getMatchTime(), null);
+        builder.addDoubleProperty("Shift Time", ()-> (DriverStation.getMatchTime() - 30) % 25, null);
 
     }
 

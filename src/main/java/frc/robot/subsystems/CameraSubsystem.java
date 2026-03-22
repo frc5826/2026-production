@@ -62,7 +62,7 @@ public class CameraSubsystem extends SubsystemBase {
                         return;
                     }
                     //TODO Check Constants Reliability
-                    odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds(), VecBuilder.fill(0.1,0.1,1).times(avgDistance));
+                    odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds(), VecBuilder.fill(0.1,0.1,1).times(avgDistance/2));
                 } else {
                     PhotonTrackedTarget target = result.getBestTarget();
                     if (target.getPoseAmbiguity() > 0.2 || target.getArea() < 0.8) {
@@ -72,7 +72,7 @@ public class CameraSubsystem extends SubsystemBase {
                             .transformBy(target.getBestCameraToTarget().inverse())
                             .transformBy(camera.robotToCamera.inverse());
                     odometry.accept(robotPose.toPose2d(), result.getTimestampSeconds(),
-                            VecBuilder.fill(0.1,0.1,1).times(10*target.getBestCameraToTarget().getTranslation().getNorm()));
+                            VecBuilder.fill(0.1,0.1,1).times(4*target.getBestCameraToTarget().getTranslation().getNorm()));
                 }
             }
         }

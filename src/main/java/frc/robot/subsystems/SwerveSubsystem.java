@@ -91,15 +91,15 @@ public class SwerveSubsystem extends LoggedSubsystem {
         }
         drive(speeds, robotOriented);
 
-        SmartDashboard.putNumber("5826/shoot/hubdistance", getHubDistance());
-        SmartDashboard.putBoolean("5826/swerve/isAtTurnTarget", isAtTurnTarget());
+//        SmartDashboard.putNumber("5826/shoot/hubdistance", getHubDistance());
+//        SmartDashboard.putBoolean("5826/swerve/isAtTurnTarget", isAtTurnTarget());
     }
 
     public void addVisionMeasurement(Pose2d robotPos, double timestamp, Matrix<N3, N1> stdDevs) {
         if (DriverStation.isDisabled()) {
             swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.1, 0.1, 1));
 
-        } else if (robotPos.getTranslation().getDistance(getPose().getTranslation()) < 3) {
+        } else if (robotPos.getTranslation().getDistance(getPose().getTranslation()) < 5) {
             swerveDrive.addVisionMeasurement(robotPos, timestamp, stdDevs);
 
         }

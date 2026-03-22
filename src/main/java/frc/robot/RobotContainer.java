@@ -48,11 +48,11 @@ public class RobotContainer {
             DataLogManager.start("/U/logs");
             DriverStation.startDataLog(DataLogManager.getLog());
         }
-        UsbCamera driverView = CameraServer.startAutomaticCapture();
-        driverView.setFPS(7);
-        driverView.setExposureManual(8);
-        driverView.setBrightness(35);
-        driverView.setResolution(400,300);
+//        UsbCamera driverView = CameraServer.startAutomaticCapture();
+//        driverView.setFPS(7);
+//        driverView.setExposureManual(8);
+//        driverView.setBrightness(35);
+//        driverView.setResolution(400,300);
 
         SignalLogger.enableAutoLogging(false);
         StatusLogger.disableAutoLogging();
