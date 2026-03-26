@@ -72,7 +72,14 @@ public class Locations {
 
     }
 
+    public static Rectangle2d getFieldZone() {
 
+        Translation2d cornerA = new Translation2d(0, 0);
+        Translation2d cornerB = new Translation2d(length, width);
+
+        return new Rectangle2d(cornerA, cornerB);
+
+    }
 
     public static Rectangle2d getLeftAllianceZone() {
 

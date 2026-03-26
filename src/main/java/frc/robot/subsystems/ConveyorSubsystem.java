@@ -4,10 +4,8 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.LoggedCommand;
 
@@ -19,7 +17,7 @@ public class ConveyorSubsystem extends LoggedSubsystem {
 
     public ConveyorSubsystem() {
 
-        motor = new SparkFlex(cOuterIndex, SparkLowLevel.MotorType.kBrushless);
+        motor = new SparkFlex(cConveyor, SparkLowLevel.MotorType.kBrushless);
         SparkFlexConfig config = (SparkFlexConfig) new SparkFlexConfig().closedLoopRampRate(0.2)
                 .smartCurrentLimit(50).inverted(false);
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

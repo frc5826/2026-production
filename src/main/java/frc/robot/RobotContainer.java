@@ -7,8 +7,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.revrobotics.util.StatusLogger;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -19,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.swerve.PathToFromMid;
-import frc.robot.commands.swerve.PriorityAimCommand;
 import frc.robot.commands.swerve.TeleopDriveCommand;
 import frc.robot.math.HubWidget;
 import frc.robot.subsystems.*;
@@ -36,12 +33,13 @@ public class RobotContainer {
     public CameraSubsystem cameras = new CameraSubsystem(swerve::addVisionMeasurement);
     public IntakeSubsystem intake = new IntakeSubsystem();
     public ConveyorSubsystem conveyor = new ConveyorSubsystem();
-    public IndexSubsystem index = new IndexSubsystem();
+    public InnerIndexSubsystem innerIndex = new InnerIndexSubsystem();
+    public OuterIndexSubsystem outerIndex = new OuterIndexSubsystem();
     public PowerDistribution pdp = new PowerDistribution(50, PowerDistribution.ModuleType.kRev);
 
     public XboxController xbox = new XboxController(1);
 
-    public CommandGroups commandGroups = new CommandGroups(cameras, climb, hood, conveyor, intake, shoot, swerve, index);
+    public CommandGroups commandGroups = new CommandGroups(cameras, climb, hood, conveyor, intake, shoot, swerve, innerIndex, outerIndex);
 
     public RobotContainer() {
         if (new File("/U/logs").isDirectory()) {
@@ -70,21 +68,21 @@ public class RobotContainer {
     private void configureBindings() {
         /* Triggers */
         new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
-        new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(new PriorityAimCommand(swerve));
+        //new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(new PriorityAimCommand(swerve));
 
         /* Bumpers */
-        //new Trigger(() -> xbox.getLeftBumperButton())
+        new Trigger(() -> xbox.getLeftBumperButton()).whileTrue(commandGroups.getDumbClimbShootGroup());
         new Trigger(() -> xbox.getRightBumperButton()).whileTrue(commandGroups.getDumbShootGroup());
 
 
         /* A B X Y */
         new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
         new Trigger(()-> xbox.getBButton()).whileTrue(PathToFromMid.get(swerve));
-        new Trigger(()-> xbox.getYButton()).whileTrue(commandGroups.getPathCommand("ClimbLeft"));
-        new Trigger(() -> xbox.getXButton()).onTrue(commandGroups.getDejammerCommand());
+//        new Trigger(()-> xbox.getYButton()).whileTrue(commandGroups.getPathCommand("ClimbLeft"));
+        new Trigger(() -> xbox.getXButton()).whileTrue(commandGroups.getDejammerCommand());
 
         /* Menu Buttons */
-        new Trigger(() -> xbox.getStartButton()).whileTrue(index.getIndexCommand());
+//        new Trigger(() -> xbox.getStartButton()).whileTrue(index.getIndexCommand());
         new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
 
         /* D - Pad */

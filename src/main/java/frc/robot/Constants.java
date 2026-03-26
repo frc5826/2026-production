@@ -74,8 +74,10 @@ public class Constants {
 
     public static class Index {
         public static final int cInnerIndex = 14;
-        public static final int cOuterIndex = 8;
-        public static final double cIndexerSpeed = -1;
+        public static final int cConveyor = 8;
+        public static final int cIndex = 100; //TODO
+        public static final double cInnerIndexSpeed = -1;
+        public static final double cOuterIndexSpeed = 1;
         public static final double cConveyorSpeed = 1;
 
     }

@@ -10,10 +10,13 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.CircularBuffer;
+import edu.wpi.first.util.DoubleCircularBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,6 +50,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
     private boolean speedsUpdated = false;
     private ChassisSpeeds speeds = new ChassisSpeeds();
     private boolean robotOriented;
+    CircularBuffer<Translation2d> recentCameraPoses = new CircularBuffer<>(3);
 
     public SwerveSubsystem() {
 
@@ -68,7 +72,8 @@ public class SwerveSubsystem extends LoggedSubsystem {
         setupPathPlanner();
 
         gyro = (AHRS) swerveDrive.getGyro().getIMU();
-        turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 0.7, 0, 0, () -> getPose().getRotation().getRadians());
+        //TODO Tune to be Faster!!
+        turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 2.1, 1.24, 0.23, () -> getPose().getRotation().getRadians());
 
         SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
         SmartDashboard.putData("5826/swerve/field", swerveDrive.field);
@@ -99,11 +104,31 @@ public class SwerveSubsystem extends LoggedSubsystem {
         if (DriverStation.isDisabled()) {
             swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.1, 0.1, 1));
 
+        } else if (!Locations.getFieldZone().contains(getPose().getTranslation())) {
+            swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0, 0, 0));
         } else if (robotPos.getTranslation().getDistance(getPose().getTranslation()) < 5) {
             swerveDrive.addVisionMeasurement(robotPos, timestamp, stdDevs);
-
         }
     }
+        /*TODO investigate this
+        } else if (robotPos.getTranslation().getDistance(getAverageTranslation(recentCameraPoses)) < 5) {
+            swerveDrive.addVisionMeasurement(robotPos, timestamp, stdDevs);
+        }
+        recentCameraPoses.addFirst(robotPos.getTranslation());
+    }
+
+
+    private Translation2d getAverageTranslation(CircularBuffer<Translation2d> buffer) {
+        double x = 0,y = 0;
+        for (int i = 0; i < buffer.size(); i++) {
+            Translation2d t = buffer.get(i);
+            x+=t.getX();
+            y+=t.getY();
+        }
+        x /= buffer.size();
+        y /= buffer.size();
+        return new Translation2d(x,y);
+    }*/
 
     public void setTurnGoal(Rotation2d targetAngle) {
         log("TurnOverride.init");

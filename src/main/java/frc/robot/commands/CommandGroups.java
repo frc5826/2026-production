@@ -25,7 +25,8 @@ public class CommandGroups {
     private IntakeSubsystem intake;
     private ShootSubsystem shoot;
     private SwerveSubsystem swerve;
-    private IndexSubsystem index;
+    private InnerIndexSubsystem innerIndex;
+    private OuterIndexSubsystem outerIndex;
 
 
     private String[] autoNames = new String[]{
@@ -39,7 +40,7 @@ public class CommandGroups {
     };
     private SendableChooser<String> autoChooser = new SendableChooser<>();
 
-    public CommandGroups(CameraSubsystem camera, ClimbSubsystem climb, HoodSubsystem hood, ConveyorSubsystem conveyor, IntakeSubsystem intake, ShootSubsystem shoot, SwerveSubsystem swerve, IndexSubsystem index) {
+    public CommandGroups(CameraSubsystem camera, ClimbSubsystem climb, HoodSubsystem hood, ConveyorSubsystem conveyor, IntakeSubsystem intake, ShootSubsystem shoot, SwerveSubsystem swerve, InnerIndexSubsystem innerIndex, OuterIndexSubsystem outerIndex) {
         this.camera = camera;
         this.climb = climb;
         this.hood = hood;
@@ -47,7 +48,8 @@ public class CommandGroups {
         this.intake = intake;
         this.shoot = shoot;
         this.swerve = swerve;
-        this.index = index;
+        this.innerIndex = innerIndex;
+        this.outerIndex = outerIndex;
 
 
         for (String name : autoNames) {
@@ -197,7 +199,14 @@ public class CommandGroups {
     }
 
     public Command getDumbShootGroup() {
-        return shoot.getShootCommand(3000)
+        return shoot.getShootCommand(3100)
+                .andThen(getInteyor())
+                .finallyDo(shoot::stopShoot);
+        //.until(shoot::isDoneShooting)
+    }
+
+    public Command getDumbClimbShootGroup() {
+        return shoot.getShootCommand(3600)
                 .andThen(getInteyor())
                 .finallyDo(shoot::stopShoot);
         //.until(shoot::isDoneShooting)
@@ -212,11 +221,11 @@ public class CommandGroups {
     }
 
     public Command getInteyor() {
-        return conveyor.getConveyorCommand().alongWith(index.getIndexCommand().alongWith(intake.getIntakeCommand()));
+        return conveyor.getConveyorCommand().alongWith(innerIndex.getIndexCommand().alongWith(intake.getIntakeCommand())).alongWith(outerIndex.getIndexCommand());
     }
 
     public Command getDejammerCommand() {
-        return intake.getReverseIntakeCommand().alongWith(index.getReverseIndexCommand()).alongWith(conveyor.getReverseConveyorCommand()).withTimeout(1);
+        return intake.getReverseIntakeCommand().alongWith(innerIndex.getReverseIndexCommand()).alongWith(conveyor.getReverseConveyorCommand()).alongWith(outerIndex.getReverseIndexCommand());
     }
 
     public Command gotoCommand(Supplier<Pose2d> endPose, PathConstraints constraints, double endSpeed) {
