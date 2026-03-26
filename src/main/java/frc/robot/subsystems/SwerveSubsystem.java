@@ -73,7 +73,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
         gyro = (AHRS) swerveDrive.getGyro().getIMU();
         //TODO Tune to be Faster!!
-        turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 2.1, 1.24, 0.23, () -> getPose().getRotation().getRadians());
+        turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 0.7, 0.0, 0.0, () -> getPose().getRotation().getRadians());
 
         SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
         SmartDashboard.putData("5826/swerve/field", swerveDrive.field);
@@ -131,9 +131,11 @@ public class SwerveSubsystem extends LoggedSubsystem {
     }*/
 
     public void setTurnGoal(Rotation2d targetAngle) {
-        log("TurnOverride.init");
+        if (!overrideTurn) {
+            log("TurnOverride.init");
+        }
         overrideTurn = true;
-        turnController.setGoal(targetAngle.getRadians(), swerveDrive.getFieldVelocity().omegaRadiansPerSecond);
+        turnController.setGoal(targetAngle.getRadians());
 
     }
 

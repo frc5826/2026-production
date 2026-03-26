@@ -36,6 +36,12 @@ public class TurnController implements NTSendable {
         setpoint = new TrapezoidProfile.State(startPoint, startVelocity);
     }
 
+    public void setGoal(double angleGoal) {
+
+        setGoal(angleGoal, setpoint.velocity);
+
+    }
+
     public double calculate(double deltaTime) {
 
         setpoint = profile.calculate(deltaTime, setpoint, goal);

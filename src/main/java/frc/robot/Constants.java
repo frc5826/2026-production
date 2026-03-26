@@ -75,7 +75,7 @@ public class Constants {
     public static class Index {
         public static final int cInnerIndex = 14;
         public static final int cConveyor = 8;
-        public static final int cIndex = 100; //TODO
+        public static final int cIndex = 16;
         public static final double cInnerIndexSpeed = -1;
         public static final double cOuterIndexSpeed = 1;
         public static final double cConveyorSpeed = 1;
@@ -104,7 +104,8 @@ public class Constants {
     9-10 shooter
     11-13 & 17 swerve drive angle
     14 inner indexer
-    16 hood
+    16 outer indexer
     15 climb
+
      */
 }
