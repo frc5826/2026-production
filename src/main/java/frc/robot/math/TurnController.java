@@ -102,7 +102,7 @@ public class TurnController implements NTSendable {
     }
 
     private double getGoal() {
-        return goal.position;
+        return angleGoal;
     }
 
     private double getCurrent() {

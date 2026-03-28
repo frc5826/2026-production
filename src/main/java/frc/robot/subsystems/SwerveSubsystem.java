@@ -73,7 +73,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
 
         gyro = (AHRS) swerveDrive.getGyro().getIMU();
         //TODO Tune to be Faster!!
-        turnController = new TurnController(1.3, 0.28, 4.5, 7.5, 0.7, 0.0, 0.0, () -> getPose().getRotation().getRadians());
+        turnController = new TurnController(0.8, 0.28, 4.5, 7.5, 0.7, 0.0, 0.0, () -> getPose().getRotation().getRadians());
 
         SwerveDriveTelemetry.verbosity = SwerveDriveTelemetry.TelemetryVerbosity.HIGH;
         SmartDashboard.putData("5826/swerve/field", swerveDrive.field);

@@ -50,10 +50,9 @@ public class PriorityAimCommand extends LoggedCommand {
         } else
             return;
 
-        if(Math.abs(rotation2dNew.minus(rotation2d).getDegrees()) > 3){
             rotation2d = rotation2dNew;
             swerveSubsystem.setTurnGoal(rotation2d);
-        }
+
     }
 
     @Override

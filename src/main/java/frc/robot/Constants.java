@@ -66,7 +66,7 @@ public class Constants {
         public static final double intakeI = 0;
         public static final double intakeD = 0;
         public static final double intakeFF = 0;
-        public static final double cMaxIntakeShake = -20;
+        public static final double cMaxIntakeShake = -45;
         public static final double cMinIntakeShake = -1;
 
 

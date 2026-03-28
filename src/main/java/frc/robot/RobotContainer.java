@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.swerve.PathToFromMid;
+import frc.robot.commands.swerve.PriorityAimCommand;
 import frc.robot.commands.swerve.TeleopDriveCommand;
 import frc.robot.math.HubWidget;
 import frc.robot.subsystems.*;
@@ -35,6 +36,7 @@ public class RobotContainer {
     public ConveyorSubsystem conveyor = new ConveyorSubsystem();
     public InnerIndexSubsystem innerIndex = new InnerIndexSubsystem();
     public OuterIndexSubsystem outerIndex = new OuterIndexSubsystem();
+    public PriorityAimCommand priorityAim = new PriorityAimCommand(swerve);
     public PowerDistribution pdp = new PowerDistribution(50, PowerDistribution.ModuleType.kRev);
 
     public XboxController xbox = new XboxController(1);
@@ -68,7 +70,7 @@ public class RobotContainer {
     private void configureBindings() {
         /* Triggers */
         new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
-        //new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(new PriorityAimCommand(swerve));
+        new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(priorityAim);
 
         /* Bumpers */
         new Trigger(() -> xbox.getLeftBumperButton()).whileTrue(commandGroups.getDumbClimbShootGroup());
@@ -78,7 +80,7 @@ public class RobotContainer {
         /* A B X Y */
         new Trigger(() -> xbox.getAButton()).toggleOnTrue(intake.getIntakeCommand());
         new Trigger(()-> xbox.getBButton()).whileTrue(PathToFromMid.get(swerve));
-//        new Trigger(()-> xbox.getYButton()).whileTrue(commandGroups.getPathCommand("ClimbLeft"));
+        new Trigger(()-> xbox.getYButton()).whileTrue(intake.shakeIntakeCommand());
         new Trigger(() -> xbox.getXButton()).whileTrue(commandGroups.getDejammerCommand());
 
         /* Menu Buttons */
