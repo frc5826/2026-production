@@ -230,7 +230,7 @@ public class CommandGroups {
     }
 
     public Command getWindUpCommand() {
-        return innerIndex.getReverseIndexCommand().alongWith(conveyor.getReverseConveyorCommand().alongWith(outerIndex.getReverseIndexCommand())).withTimeout(0.7);
+        return innerIndex.getReverseIndexCommand().alongWith(conveyor.getReverseConveyorCommand().alongWith(outerIndex.getReverseIndexCommand())).withTimeout(0.3);
     }
 
     public Command gotoCommand(Supplier<Pose2d> endPose, PathConstraints constraints, double endSpeed) {

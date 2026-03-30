@@ -51,6 +51,7 @@ public class ShootSubsystem extends LoggedSubsystem {
         SmartDashboard.putData("5826/shoot/controller", controller);
         SmartDashboard.putData("5826/shoot/beamBreak", beamBreak);
         Preferences.initDouble("distanceOffset", 0);
+        Preferences.initDouble("RPMMultiplier",1);
 
         motor1 = new SparkFlex(cMotorIDShooter1, SparkLowLevel.MotorType.kBrushless);
         motor2 = new SparkFlex(cMotorIDShooter2, SparkLowLevel.MotorType.kBrushless);
@@ -125,13 +126,16 @@ public class ShootSubsystem extends LoggedSubsystem {
 
     private static double getRPMFromDistance(double distance) {
         double x = distance + Preferences.getDouble("distanceOffset", 0);
-        return (-448.93378 * Math.pow(distance, 4)) + (5802.46914 * Math.pow(distance, 3)) - (27717.1717 * Math.pow(distance, 2)) + (58471.7172 * distance) - 43400;
-        //y=-448.93378x^{4}+5802.46914x^{3}-27717.1717x^{2}+58471.7172x-43400
-    }
+        double RPM = (-448.93378 * Math.pow(distance, 4)) + (5802.46914 * Math.pow(distance, 3)) - (27717.1717 * Math.pow(distance, 2)) + (58471.7172 * distance) - 43400;
+        return RPM * Preferences.getDouble("RPMMultiplier",1);
 
+        //y=-448.93378x^{4}+5802.46914x^{3}-27717.1717x^{2}+58471.7172x-43400
+
+    }
     public void setGoalDistance(double distance) {
         double speed = getRPMFromDistance(distance);
         setGoalSpeed(speed);
+
     }
 
     public Command getStopCommand() {

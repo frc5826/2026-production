@@ -101,7 +101,7 @@ public class SwerveSubsystem extends LoggedSubsystem {
     }
 
     public void addVisionMeasurement(Pose2d robotPos, double timestamp, Matrix<N3, N1> stdDevs) {
-        if (DriverStation.isDisabled()) {
+        if (DriverStation.isDisabled()||overrideTurn) {
             swerveDrive.addVisionMeasurement(robotPos, timestamp, VecBuilder.fill(0.1, 0.1, 1));
 
         } else if (!Locations.getFieldZone().contains(getPose().getTranslation())) {
