@@ -214,7 +214,7 @@ public class CommandGroups {
     }
 
     public Command getSpinUpAim() {
-        return getWindUpCommand().alongWith(shoot.getShootCommand(swerve::getHubDistance, true)
+        return (shoot.getShootCommand(swerve::getHubDistance, true)
                 .alongWith(
                         new PriorityAimCommand(swerve))
 //                ).until(()->shoot.isAtGoalSpeed());
@@ -230,7 +230,7 @@ public class CommandGroups {
     }
 
     public Command getWindUpCommand() {
-        return innerIndex.getReverseIndexCommand().alongWith(conveyor.getReverseConveyorCommand().alongWith(outerIndex.getReverseIndexCommand())).withTimeout(0.3);
+        return innerIndex.getReverseIndexCommand().alongWith(conveyor.getReverseConveyorCommand().alongWith(outerIndex.getReverseIndexCommand()));
     }
 
     public Command gotoCommand(Supplier<Pose2d> endPose, PathConstraints constraints, double endSpeed) {
