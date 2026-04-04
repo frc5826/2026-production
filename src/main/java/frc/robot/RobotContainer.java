@@ -70,7 +70,7 @@ public class RobotContainer {
     private void configureBindings() {
         /* Triggers */
         new Trigger(() -> xbox.getRightTriggerAxis() > 0.5).whileTrue(commandGroups.getShootGroup());
-        new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(priorityAim);
+//        new Trigger(() -> xbox.getLeftTriggerAxis() > 0.5).toggleOnTrue(priorityAim);
 
         /* Bumpers */
         new Trigger(() -> xbox.getLeftBumperButton()).whileTrue(commandGroups.getDumbClimbShootGroup());

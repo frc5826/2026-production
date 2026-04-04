@@ -126,7 +126,7 @@ public class CommandGroups {
             return (//First Pass
                     getPathCommand("midFromLeftAuto"))
                         .andThen(getPathCommand("leftFromMidAuto").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
-                        .andThen(getAutoShootGroup().withTimeout(6))
+                        .andThen(getAutoShootGroup().withTimeout(8))
                     //Second Pass
                     .andThen(getPathCommand("secondShallowMidAuto")
                             .andThen(getPathCommand("secondShallowMidAutoFinal").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
@@ -153,7 +153,7 @@ public class CommandGroups {
             return (//First Pass
                     getPathCommand("shallowMidAuto"))
                     .andThen(getPathCommand("shallowMidAutoFinal").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
-                    .andThen(getAutoShootGroup().withTimeout(4))
+                    .andThen(getAutoShootGroup().withTimeout(5))
                     //Second Pass
                     .andThen(getPathCommand("secondShallowMidAuto")
                             .andThen(getPathCommand("secondShallowMidAutoFinal").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
@@ -163,7 +163,7 @@ public class CommandGroups {
             return (//First Pass
                     getMirrorPathCommand("shallowMidAuto"))
                     .andThen(getMirrorPathCommand("shallowMidAutoFinal").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
-                    .andThen(getAutoShootGroup().withTimeout(4))
+                    .andThen(getAutoShootGroup().withTimeout(5))
                     //Second Pass
                     .andThen(getMirrorPathCommand("secondShallowMidAuto")
                             .andThen(getMirrorPathCommand("secondShallowMidAutoFinal").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())

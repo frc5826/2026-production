@@ -80,7 +80,7 @@ public class IntakeSubsystem extends LoggedSubsystem {
                                 armSetpoint += cShakeSpeed;
                                 armMotor.getClosedLoopController().setSetpoint(armSetpoint, SparkBase.ControlType.kPosition);
                             }
-                        }, armSubsystem
+                        }
                 )).finallyDo(() -> {
                     armMotor.getClosedLoopController().setSetpoint(0, SparkBase.ControlType.kPosition);
                 }).onlyIf(() -> Preferences.getBoolean("IntakeUpDown", true));
