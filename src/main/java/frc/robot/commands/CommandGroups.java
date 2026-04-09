@@ -196,6 +196,7 @@ public class CommandGroups {
 
     public Command getDumbShootGroup() {
         return shoot.getShootCommand(3100)
+                .alongWith(intake.shakeIntakeCommand())
                 .andThen(getInteyor())
                 .finallyDo(shoot::stopShoot);
         //.until(shoot::isDoneShooting)
@@ -203,6 +204,7 @@ public class CommandGroups {
 
     public Command getDumbClimbShootGroup() {
         return shoot.getShootCommand(3600)
+                .alongWith(intake.shakeIntakeCommand())
                 .andThen(getInteyor())
                 .finallyDo(shoot::stopShoot);
         //.until(shoot::isDoneShooting)
