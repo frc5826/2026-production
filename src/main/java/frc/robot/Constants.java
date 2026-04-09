@@ -83,13 +83,13 @@ public class Constants {
 
     }
 
-    public static class Climb {
-        public static final int cClimber = 15;
-        public static final double cDownPos = 0.3;
-        public static final double cStowPos = 0;
-        public static final double cUpPos = 0.85;
-        public static final double cConfigMultiplier = ((1.0 / 45.0) * (1.124 + 0.25) * Math.PI) / 10.875;
-    }
+//    public static class Climb {
+//        public static final int cClimber = 15;
+//        public static final double cDownPos = 0.3;
+//        public static final double cStowPos = 0;
+//        public static final double cUpPos = 0.85;
+//        public static final double cConfigMultiplier = ((1.0 / 45.0) * (1.124 + 0.25) * Math.PI) / 10.875;
+//    }
 
     public static class Vision {
         public static final double cDistanceCutoff = 4; //Meters

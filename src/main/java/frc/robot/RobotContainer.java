@@ -30,7 +30,7 @@ public class RobotContainer {
     public ShootSubsystem shoot = new ShootSubsystem();
     public SwerveSubsystem swerve = new SwerveSubsystem();
     public HoodSubsystem hood = new HoodSubsystem();
-    public ClimbSubsystem climb = new ClimbSubsystem();
+//    public ClimbSubsystem climb = new ClimbSubsystem();
     public CameraSubsystem cameras = new CameraSubsystem(swerve::addVisionMeasurement);
     public IntakeSubsystem intake = new IntakeSubsystem();
     public ConveyorSubsystem conveyor = new ConveyorSubsystem();
@@ -41,7 +41,7 @@ public class RobotContainer {
 
     public XboxController xbox = new XboxController(1);
 
-    public CommandGroups commandGroups = new CommandGroups(cameras, climb, hood, conveyor, intake, shoot, swerve, innerIndex, outerIndex);
+    public CommandGroups commandGroups = new CommandGroups(cameras, hood, conveyor, intake, shoot, swerve, innerIndex, outerIndex);
 
     public RobotContainer() {
         if (new File("/U/logs").isDirectory()) {
@@ -88,10 +88,10 @@ public class RobotContainer {
         new Trigger(() -> xbox.getBackButton()).onTrue(new InstantCommand(swerve::zeroGyro));
 
         /* D - Pad */
-        new Trigger(()-> xbox.getPOV()==0).whileTrue(climb.hookUpCommand());
-        new Trigger(()-> xbox.getPOV()== 90).whileTrue(climb.hookDownCommand());
-        new Trigger(()-> xbox.getPOV()== 180).whileTrue(climb.stowCommand());
-        new Trigger(()-> xbox.getPOV()== 270).whileTrue(climb.manualDownCommand());
+//        new Trigger(()-> xbox.getPOV()==0).whileTrue(climb.hookUpCommand());
+//        new Trigger(()-> xbox.getPOV()== 90).whileTrue(climb.hookDownCommand());
+//        new Trigger(()-> xbox.getPOV()== 180).whileTrue(climb.stowCommand());
+//        new Trigger(()-> xbox.getPOV()== 270).whileTrue(climb.manualDownCommand());
 
     }
 

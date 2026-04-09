@@ -19,7 +19,7 @@ import static frc.robot.Constants.Swerve.*;
 
 public class CommandGroups {
     private CameraSubsystem camera;
-    private ClimbSubsystem climb;
+//    private ClimbSubsystem climb;
     private HoodSubsystem hood;
     private ConveyorSubsystem conveyor;
     private IntakeSubsystem intake;
@@ -33,14 +33,13 @@ public class CommandGroups {
             "shootOnly",
             "farMidAuto",
             "middleShootHumanShoot",
-            "middleShootClimb",
             "shallowMidAuto"
     };
     private SendableChooser<String> autoChooser = new SendableChooser<>();
 
-    public CommandGroups(CameraSubsystem camera, ClimbSubsystem climb, HoodSubsystem hood, ConveyorSubsystem conveyor, IntakeSubsystem intake, ShootSubsystem shoot, SwerveSubsystem swerve, InnerIndexSubsystem innerIndex, OuterIndexSubsystem outerIndex) {
+    public CommandGroups(CameraSubsystem camera, HoodSubsystem hood, ConveyorSubsystem conveyor, IntakeSubsystem intake, ShootSubsystem shoot, SwerveSubsystem swerve, InnerIndexSubsystem innerIndex, OuterIndexSubsystem outerIndex) {
         this.camera = camera;
-        this.climb = climb;
+//        this.climb = climb;
         this.hood = hood;
         this.conveyor = conveyor;
         this.intake = intake;
@@ -89,12 +88,6 @@ public class CommandGroups {
                     .andThen(new WaitCommand(2))
                     .andThen(getPathCommand("humanFromRightAutoFinal"))
                     .andThen(getAutoShootGroup());
-        } else if (autoChooser.getSelected().equals("middleShootClimb")) {
-            return init.alongWith((getPathCommand("shallowMidAuto"))
-                            .andThen(getPathCommand("shallowMidAutoFinal")).alongWith(shoot.getShootCommand(3100)).deadlineFor(intake.getIntakeCommand()))
-                    .andThen(getAutoShootGroup().withTimeout(3))
-                    .andThen(getPathCommand("ClimbLeft").deadlineFor(climb.hookUpCommand()))
-                    .andThen(climb.hookDownCommand());
         }
         return init;
     }
