@@ -82,11 +82,13 @@ public class CommandGroups {
             return init.alongWith(getShallowMidAuto());
 
         } else if (autoChooser.getSelected().equals("middleShootHumanShoot")) {
-            return init.alongWith((getMirrorPathCommand("midFromLeftAuto"))
-                            .andThen(getMirrorPathCommand("leftFromMidAuto")).alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
+            return init.alongWith((getMirrorPathCommand("shallowMidAuto"))
+                            .andThen(getMirrorPathCommand("shallowMidAutoFinal")).alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
                     .andThen(getAutoShootGroup().withTimeout(4))
                     .andThen(getPathCommand("humanFromRightAuto").deadlineFor(intake.getIntakeCommand()))
-                    .andThen(getAutoShootGroup().withTimeout(4));
+                    .andThen(new WaitCommand(2))
+                    .andThen(getPathCommand("humanFromRightAutoFinal"))
+                    .andThen(getAutoShootGroup());
         } else if (autoChooser.getSelected().equals("middleShootClimb")) {
             return init.alongWith((getPathCommand("shallowMidAuto"))
                             .andThen(getPathCommand("shallowMidAutoFinal")).alongWith(shoot.getShootCommand(3100)).deadlineFor(intake.getIntakeCommand()))

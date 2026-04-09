@@ -57,6 +57,7 @@ public class Constants {
 
     public static class Intake {
         public static final int cMotorIDIntake1 = 5;
+        public static final int cMotorIDIntake2 = 15;
         public static final double cArmMotorSpeed = 0.4;
         public static final double cShakeSpeed = 1.5;
         public static final int cArmMotor = 7;
@@ -98,14 +99,14 @@ public class Constants {
 
     /*
     1-4 swerve drive driver
-    5 intake roller
+    5 & 15 intake roller
     6-7 intake arm
     8 conveyor
     9-10 shooter
     11-13 & 17 swerve drive angle
     14 inner indexer
     16 outer indexer
-    15 climb
+
 
      */
 }

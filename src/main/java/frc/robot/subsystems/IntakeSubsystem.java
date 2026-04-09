@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.*;
+import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,7 +19,7 @@ import frc.robot.commands.LoggedCommand;
 import static frc.robot.Constants.Intake.*;
 
 public class IntakeSubsystem extends LoggedSubsystem {
-    private SparkFlex intakeMotor;
+    private SparkFlex intakeMotor, intakeMotorFollower;
     private SparkMax armMotor;
     private SparkMax armMotorFollower;
     private Subsystem armSubsystem = new LoggedSubsystem();
@@ -28,8 +29,10 @@ public class IntakeSubsystem extends LoggedSubsystem {
 
     public IntakeSubsystem() {
         intakeMotor = new SparkFlex(cMotorIDIntake1, SparkLowLevel.MotorType.kBrushless);
+        intakeMotorFollower = new SparkFlex(cMotorIDIntake2, SparkLowLevel.MotorType.kBrushless);
         SparkBaseConfig intakeConfig = new SparkFlexConfig().inverted(true).smartCurrentLimit(50);
         intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        intakeMotorFollower.configure(intakeConfig.follow(intakeMotor, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         armMotor = new SparkMax(cArmMotor, SparkLowLevel.MotorType.kBrushless);
         armMotorFollower = new SparkMax(cArmMotorFollower, SparkLowLevel.MotorType.kBrushless);
         SparkBaseConfig config = new SparkMaxConfig().smartCurrentLimit(20)
