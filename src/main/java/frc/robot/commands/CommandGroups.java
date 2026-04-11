@@ -6,6 +6,7 @@ import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
@@ -28,12 +29,15 @@ public class CommandGroups {
     private InnerIndexSubsystem innerIndex;
     private OuterIndexSubsystem outerIndex;
 
+    private Command autoCommand;
+
 
     private String[] autoNames = new String[]{
             "shootOnly",
+            "shallowMidAuto",
             "farMidAuto",
             "middleShootHumanShoot",
-            "shallowMidAuto"
+            "humanPlayerGrabShoot"
     };
     private SendableChooser<String> autoChooser = new SendableChooser<>();
 
@@ -48,15 +52,25 @@ public class CommandGroups {
         this.innerIndex = innerIndex;
         this.outerIndex = outerIndex;
 
-
         for (String name : autoNames) {
             autoChooser.addOption(name, name);
         }
         autoChooser.setDefaultOption("empty", "empty");
+        SmartDashboard.putString("5826/auto/current", "");
+        SmartDashboard.putData("5826/auto/Chooser", autoChooser);
+        SmartDashboard.putData("5826/auto/regenerate",
+                new InstantCommand(() -> autoCommand = getAuto())
+                        .ignoringDisable(true)
+        );
 
-        SmartDashboard.putData("5826/Auto", autoChooser);
+        autoCommand = getAuto();
 
+        autoChooser.onChange((x) -> autoCommand = getAuto());
 
+    }
+
+    public Command getAutoCommand() {
+        return autoCommand;
     }
 
     public Command getAuto() {
@@ -65,14 +79,19 @@ public class CommandGroups {
         Command init = new InstantCommand().alongWith(intake.intakeDown());
 
         if (autoChooser.getSelected().equals("empty")) {
+            SmartDashboard.putString("5826/auto/current", "Empty");
             return init;
         } else if (autoChooser.getSelected().equals("shootOnly")) {
+            SmartDashboard.putString("5826/auto/current", "shootOnly");
             return init.andThen(moveCommand(-2, 0, cSlowPath, 0)).andThen(getAutoShootGroup());
 
         } else if (autoChooser.getSelected().equals("humanPlayerGrabShoot")) {
+            SmartDashboard.putString("5826/auto/current", "humanPlayerGrabShoot");
             return init.alongWith((getPathCommand("humanOnlyAuto"))
-                            .andThen(getPathCommand("humanOnlyAutoFinal")).alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand()).beforeStarting(()->shoot.getNotCANRange())
-                    .andThen(getAutoShootGroup().withTimeout(4));
+                            .andThen(new WaitCommand(5))
+                            .andThen(getPathCommand("humanOnlyAutoFinal"))
+                            .alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
+                    .andThen(getAutoShootGroup());
 
         } else if (autoChooser.getSelected().equals("farMidAuto")) {
             return init.alongWith(getMidAuto());
@@ -118,6 +137,7 @@ public class CommandGroups {
 
     public Command getMidAuto() {
         if (Locations.getLeftAutoZone().contains(swerve.getPose().getTranslation())) {
+            SmartDashboard.putString("5826/auto/current", "LEFT DeepAuto");
             return (//First Pass
                     getPathCommand("midFromLeftAuto"))
                         .andThen(getPathCommand("leftFromMidAuto").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
@@ -128,10 +148,11 @@ public class CommandGroups {
                             .andThen(getAutoShootGroup().withTimeout(6))
                     );
         } else if (Locations.getRightAutoZone().contains(swerve.getPose().getTranslation())) {
+            SmartDashboard.putString("5826/auto/current", "RIGHT DeepAuto");
             return (//First Pass
                     getMirrorPathCommand("midFromLeftAuto"))
                     .andThen(getMirrorPathCommand("leftFromMidAuto").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
-                    .andThen(getAutoShootGroup().withTimeout(6))
+                    .andThen(getAutoShootGroup().withTimeout(8))
                     //Second Pass
                     .andThen(getMirrorPathCommand("secondShallowMidAuto")
                             .andThen(getMirrorPathCommand("secondShallowMidAutoFinal").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
@@ -145,6 +166,8 @@ public class CommandGroups {
 
     public Command getShallowMidAuto() {
         if (Locations.getLeftAutoZone().contains(swerve.getPose().getTranslation())) {
+            SmartDashboard.putString("5826/auto/current", "LEFT ShallowAuto");
+
             return (//First Pass
                     getPathCommand("shallowMidAuto"))
                     .andThen(getPathCommand("shallowMidAutoFinal").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
@@ -155,6 +178,8 @@ public class CommandGroups {
                             .andThen(getAutoShootGroup().withTimeout(4))
                     );
         } else if (Locations.getRightAutoZone().contains(swerve.getPose().getTranslation())) {
+            SmartDashboard.putString("5826/auto/current", "RIGHT ShallowAuto");
+
             return (//First Pass
                     getMirrorPathCommand("shallowMidAuto"))
                     .andThen(getMirrorPathCommand("shallowMidAutoFinal").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
@@ -196,19 +221,33 @@ public class CommandGroups {
 
     public Command getDumbShootGroup() {
         return shoot.getShootCommand(3100)
-                .alongWith(intake.shakeIntakeCommand())
                 .andThen(getInteyor())
+                .alongWith(intake.shakeIntakeCommand())
                 .finallyDo(shoot::stopShoot);
+        //.until(shoot::isDoneShooting)
+    }
+    public Command getShuttleShoot() {
+        return (shoot.getShootCommand(3000)
+                .andThen(getInteyor())
+                .alongWith(intake.shakeIntakeCommand())
+                .finallyDo(shoot::stopShoot)).beforeStarting((() -> {
+           if(Locations.getIsBlue()){
+               swerve.setTurnGoal(Rotation2d.k180deg);
+           } else{
+               swerve.setTurnGoal(Rotation2d.kZero);
+           }
+        })).finallyDo(() -> swerve.endTurn());
         //.until(shoot::isDoneShooting)
     }
 
     public Command getDumbClimbShootGroup() {
         return shoot.getShootCommand(3600)
-                .alongWith(intake.shakeIntakeCommand())
                 .andThen(getInteyor())
+                .alongWith(intake.shakeIntakeCommand())
                 .finallyDo(shoot::stopShoot);
         //.until(shoot::isDoneShooting)
     }
+
 
     public Command getSpinUpAim() {
         return (shoot.getShootCommand(swerve::getHubDistance, true)

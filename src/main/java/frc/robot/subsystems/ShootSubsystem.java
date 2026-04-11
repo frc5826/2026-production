@@ -116,7 +116,7 @@ public class ShootSubsystem extends LoggedSubsystem {
                 new RunCommand(() -> {
                     stop = false;
                     if (shootBoost.get() < 1) {
-                        setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()) * 1.05);
+                        setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()));
                     } else {
                         setGoalSpeed(getRPMFromDistance(distanceSupplier.getAsDouble()));
                     }
