@@ -25,6 +25,7 @@ public class IntakeSubsystem extends LoggedSubsystem {
     private Subsystem armSubsystem = new LoggedSubsystem();
     private double armSetpoint;
     private boolean armMovingUp = true;
+    private boolean isIntakeRunning = false;
 
 
     public IntakeSubsystem() {
@@ -49,6 +50,7 @@ public class IntakeSubsystem extends LoggedSubsystem {
     public void periodic() {
         super.periodic();
         SmartDashboard.putNumber("5826/Intake/ArmPosition", armMotor.getEncoder().getPosition());
+        SmartDashboard.putBoolean("5826/Intake/IntakeRunning", intakeRunning());
     }
 
     public Command getIntakeCommand() {
@@ -63,6 +65,8 @@ public class IntakeSubsystem extends LoggedSubsystem {
 
     public void setSpeed(double speed) {
         intakeMotor.set(speed);
+        //TODO double equals could be tricky (0.000000001)
+        isIntakeRunning = speed != 0.0;
     }
 
     public Command shakeIntakeCommand() {
@@ -108,6 +112,10 @@ public class IntakeSubsystem extends LoggedSubsystem {
                     armMotor.getEncoder().setPosition(0);
                 });
         return LoggedCommand.logCommand(c, "Intake Down");
+    }
+
+    private boolean intakeRunning () {
+       return isIntakeRunning;
     }
 
 }
