@@ -20,7 +20,7 @@ import static frc.robot.Constants.Swerve.*;
 
 public class CommandGroups {
     private CameraSubsystem camera;
-//    private ClimbSubsystem climb;
+    //    private ClimbSubsystem climb;
     private HoodSubsystem hood;
     private ConveyorSubsystem conveyor;
     private IntakeSubsystem intake;
@@ -56,6 +56,7 @@ public class CommandGroups {
             autoChooser.addOption(name, name);
         }
         autoChooser.setDefaultOption("empty", "empty");
+        SmartDashboard.putNumber("5826/auto/delay", 0);
         SmartDashboard.putString("5826/auto/current", "");
         SmartDashboard.putData("5826/auto/Chooser", autoChooser);
         SmartDashboard.putData("5826/auto/regenerate",
@@ -94,10 +95,10 @@ public class CommandGroups {
                     .andThen(getAutoShootGroup());
 
         } else if (autoChooser.getSelected().equals("farMidAuto")) {
-            return init.alongWith(getMidAuto());
+            return new WaitCommand(SmartDashboard.getNumber("5826/auto/delay",0)).andThen(init.alongWith(getMidAuto()));
 
         } else if (autoChooser.getSelected().equals("shallowMidAuto")) {
-            return init.alongWith(getShallowMidAuto());
+            return new WaitCommand(SmartDashboard.getNumber("5826/auto/delay",0)).andThen(init.alongWith(getShallowMidAuto()));
 
         } else if (autoChooser.getSelected().equals("middleShootHumanShoot")) {
             return init.alongWith((getMirrorPathCommand("shallowMidAuto"))
@@ -137,18 +138,20 @@ public class CommandGroups {
 
     public Command getMidAuto() {
         if (Locations.getLeftAutoZone().contains(swerve.getPose().getTranslation())) {
-            SmartDashboard.putString("5826/auto/current", "LEFT DeepAuto");
+            SmartDashboard.putString("5826/auto/current", "LEFT DeepAuto with "
+                    + SmartDashboard.getNumber("5826/auto/delay",0) + "s delay");
             return (//First Pass
                     getPathCommand("midFromLeftAuto"))
-                        .andThen(getPathCommand("leftFromMidAuto").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
-                        .andThen(getAutoShootGroup().withTimeout(8))
+                    .andThen(getPathCommand("leftFromMidAuto").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
+                    .andThen(getAutoShootGroup().withTimeout(8))
                     //Second Pass
                     .andThen(getPathCommand("secondShallowMidAuto")
                             .andThen(getPathCommand("secondShallowMidAutoFinal").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
                             .andThen(getAutoShootGroup().withTimeout(6))
                     );
         } else if (Locations.getRightAutoZone().contains(swerve.getPose().getTranslation())) {
-            SmartDashboard.putString("5826/auto/current", "RIGHT DeepAuto");
+            SmartDashboard.putString("5826/auto/current", "RIGHT DeepAuto with "
+                    + SmartDashboard.getNumber("5826/auto/delay",0) + "s delay");
             return (//First Pass
                     getMirrorPathCommand("midFromLeftAuto"))
                     .andThen(getMirrorPathCommand("leftFromMidAuto").alongWith(shoot.getShootCommand(3100))).deadlineFor(intake.getIntakeCommand())
@@ -166,7 +169,8 @@ public class CommandGroups {
 
     public Command getShallowMidAuto() {
         if (Locations.getLeftAutoZone().contains(swerve.getPose().getTranslation())) {
-            SmartDashboard.putString("5826/auto/current", "LEFT ShallowAuto");
+            SmartDashboard.putString("5826/auto/current", "LEFT ShallowAuto with "
+                    + SmartDashboard.getNumber("5826/auto/delay",0) + "s delay");
 
             return (//First Pass
                     getPathCommand("shallowMidAuto"))
@@ -178,7 +182,8 @@ public class CommandGroups {
                             .andThen(getAutoShootGroup().withTimeout(4))
                     );
         } else if (Locations.getRightAutoZone().contains(swerve.getPose().getTranslation())) {
-            SmartDashboard.putString("5826/auto/current", "RIGHT ShallowAuto");
+            SmartDashboard.putString("5826/auto/current", "RIGHT ShallowAuto with "
+                    + SmartDashboard.getNumber("5826/auto/delay",0) + "s delay");
 
             return (//First Pass
                     getMirrorPathCommand("shallowMidAuto"))
@@ -231,11 +236,11 @@ public class CommandGroups {
                 .andThen(getInteyor())
                 .alongWith(intake.shakeIntakeCommand())
                 .finallyDo(shoot::stopShoot)).beforeStarting((() -> {
-           if(Locations.getIsBlue()){
-               swerve.setTurnGoal(Rotation2d.k180deg);
-           } else{
-               swerve.setTurnGoal(Rotation2d.kZero);
-           }
+            if(Locations.getIsBlue()){
+                swerve.setTurnGoal(Rotation2d.k180deg);
+            } else{
+                swerve.setTurnGoal(Rotation2d.kZero);
+            }
         })).finallyDo(() -> swerve.endTurn());
         //.until(shoot::isDoneShooting)
     }
@@ -254,7 +259,7 @@ public class CommandGroups {
                 .alongWith(
                         new PriorityAimCommand(swerve))
 //                ).until(()->shoot.isAtGoalSpeed());
-                ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
+        ).until(() -> swerve.isAtTurnTarget() && shoot.isAtGoalSpeed());
     }
 
     public Command getInteyor() {
