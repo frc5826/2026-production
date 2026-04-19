@@ -42,6 +42,7 @@ public class IntakeSubsystem extends LoggedSubsystem {
         armMotor.configure(config.inverted(false), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         armMotorFollower.configure(config.follow(armMotor, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         Preferences.initBoolean("IntakeUpDown", true);
+        SmartDashboard.putData("5826/Intake/PutArmDown", intakeDown());
 
     }
 
@@ -62,6 +63,11 @@ public class IntakeSubsystem extends LoggedSubsystem {
     }
 
     public void setSpeed(double speed) {
+        if(speed != 0) {
+            SmartDashboard.putBoolean("5826/intake/IntakeRunning", true);
+        } else {
+            SmartDashboard.putBoolean("5826/intake/IntakeRunning", false);
+        }
         intakeMotor.set(speed);
     }
 

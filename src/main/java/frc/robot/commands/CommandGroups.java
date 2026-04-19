@@ -232,7 +232,7 @@ public class CommandGroups {
         //.until(shoot::isDoneShooting)
     }
     public Command getShuttleShoot() {
-        return (shoot.getShootCommand(3000)
+        return (shoot.getShootCommand(3600)
                 .andThen(getInteyor())
                 .alongWith(intake.shakeIntakeCommand())
                 .finallyDo(shoot::stopShoot)).beforeStarting((() -> {
